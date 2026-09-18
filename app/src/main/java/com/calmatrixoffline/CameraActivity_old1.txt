@@ -1,0 +1,365 @@
+package com.calsnap1;
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import java.io.IOException;
+
+public class CameraActivity extends AppCompatActivity {
+    private static final int CAMERA_PERMISSION_REQUEST = 101;
+    private static final int CAMERA_REQUEST = 102;
+    private static final int GALLERY_REQUEST = 103;
+
+    private ImageView photoPreview;
+    private TextView resultText;
+    private Button captureBtn, galleryBtn, useFoodBtn, upgradeBtn, backBtn,fixBtn;
+
+    private Bitmap capturedImage;
+    private String recognizedFood = "";
+    private FoodClassifier classifier;
+    private DatabaseHelper dbHelper;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
+
+        // Initialize
+        dbHelper = new DatabaseHelper(this);
+        classifier = new FoodClassifier(this);
+
+        // Views
+        photoPreview = findViewById(R.id.photoPreview);
+        resultText = findViewById(R.id.resultText);
+        captureBtn = findViewById(R.id.captureBtn);
+        galleryBtn = findViewById(R.id.galleryBtn);
+        useFoodBtn = findViewById(R.id.useFoodBtn);
+        upgradeBtn = findViewById(R.id.upgradeBtn);
+        backBtn = findViewById(R.id.backBtn);
+        //260825 correction button
+        fixBtn = findViewById(R.id.fixBtn);
+
+        // Take Photo
+        captureBtn.setOnClickListener(v -> {
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                    != PackageManager.PERMISSION_GRANTED) {
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA},
+                        CAMERA_PERMISSION_REQUEST);
+            } else {
+                openCamera();
+            }
+        });
+
+        // Choose from Gallery
+        galleryBtn.setOnClickListener(v -> {
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto, GALLERY_REQUEST);
+        });
+
+        // Use Food (send back to MainActivity)
+        useFoodBtn.setOnClickListener(v -> {
+            if (!recognizedFood.isEmpty()) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("FOOD_NAME", recognizedFood);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            }
+        });
+
+        // Upgrade to full version
+        upgradeBtn.setOnClickListener(v -> {
+            Intent browserIntent = new Intent(Intent.ACTION_VIEW,
+                    Uri.parse("https://transtech.gumroad.com/l/dbmlsu"));
+            startActivity(browserIntent);
+        });
+
+        backBtn.setOnClickListener(v -> finish());
+
+        // Hide buttons initially
+        useFoodBtn.setVisibility(android.view.View.GONE);
+        upgradeBtn.setVisibility(android.view.View.GONE);
+    }
+
+    private void openCamera() {
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        } else {
+            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            capturedImage = (Bitmap) data.getExtras().get("data");
+            if (capturedImage != null) {
+                photoPreview.setImageBitmap(capturedImage);
+                recognizeFood(capturedImage);
+            }
+        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            try {
+                capturedImage = MediaStore.Images.Media.getBitmap(
+                        this.getContentResolver(), data.getData());
+                if (capturedImage != null) {
+                    photoPreview.setImageBitmap(capturedImage);
+                    recognizeFood(capturedImage);
+                }
+            } catch (IOException e) {
+                Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+    private void recognizeFood(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);  // Hide initially
+        recognizedFood = "";
+
+        // Get the model's best guess
+        String foodName = classifier.classifyFood(image, dbHelper);
+
+        if (foodName.equals("food") || foodName == null) {
+            resultText.setText("❌ Could not identify food.\nTry taking a clearer photo.");
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Fix: Enter food name...");
+            return;
+        }
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(foodName);
+
+        // Store the raw model output for correction
+        final String modelOutput = foodName; // This is the name the model gave
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            recognizedFood = foodName;
+            resultText.setText("🔍 Recognized: " + foodName + "\n" +
+                    "⚠️ Not in your database yet.");
+            useFoodBtn.setVisibility(View.GONE);
+        }
+
+        // --- ALWAYS show the Fix button ---
+        fixBtn.setVisibility(View.VISIBLE);
+        fixBtn.setText("✏️ Fix: This is actually...");
+
+        // --- Set up the Fix button ---
+        fixBtn.setOnClickListener(v -> {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("Correct Food Name");
+            builder.setMessage("What food is this actually?");
+
+            final EditText input = new EditText(this);
+            input.setHint("e.g., Pizza");
+            input.setText(recognizedFood.isEmpty() ? foodName : recognizedFood); // Pre-fill with current guess
+            builder.setView(input);
+
+            builder.setPositiveButton("Save", (dialog, which) -> {
+                String userCorrection = input.getText().toString().trim();
+                if (!userCorrection.isEmpty()) {
+                    // Save correction: model output -> user's correction
+                    dbHelper.saveCorrection(foodName, userCorrection);
+                    resultText.setText("✅ Saved: " + userCorrection);
+                    Toast.makeText(this, "Correction saved!", Toast.LENGTH_SHORT).show();
+
+                    // Update the "Use" button to use the correction
+                    useFoodBtn.setOnClickListener(v2 -> {
+                        // Send the corrected name back to MainActivity
+                        sendResultToMain(userCorrection);
+                    });
+                    useFoodBtn.setVisibility(View.VISIBLE);
+                    useFoodBtn.setText("📝 Use \"" + userCorrection + "\"");
+                    recognizedFood = userCorrection;
+                }
+            });
+            builder.setNegativeButton("Cancel", null);
+            builder.show();
+        });
+    }
+
+
+
+    //
+    private void recognizeFood_old3(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        recognizedFood = "";
+
+        // Pass dbHelper to the classifier
+        String foodName = classifier.classifyFood(image, dbHelper);
+
+        if (foodName.equals("food")) {
+            resultText.setText("❌ Could not identify food.\nTry taking a clearer photo.");
+            return;
+        }
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(foodName);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+            fixBtn.setVisibility(View.GONE);
+        } else {
+            recognizedFood = foodName;
+            resultText.setText("🔍 Recognized: " + foodName + "\n" +
+                    "⚠️ Not in your database yet.");
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Fix: This is actually...");
+        }
+    }
+
+
+
+    //
+    //new 26082512
+    private void recognizeFood_old2(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        recognizedFood = "";
+
+        // Pass dbHelper to the classifier
+        String foodName = classifier.classifyFood(image, dbHelper);
+
+        if (foodName.equals("food")) {
+            resultText.setText("❌ Could not identify food.\nTry taking a clearer photo.");
+            return;
+        }
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(foodName);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+            fixBtn.setVisibility(View.GONE);
+        } else {
+            recognizedFood = foodName;
+            resultText.setText("🔍 Recognized: " + foodName + "\n" +
+                    "⚠️ Not in your database yet.");
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Fix: This is actually...");
+        }
+    }
+
+    //end new 269982512
+
+    /*
+    private void recognizeFood_old2(Bitmap image) {//replaced 26082512
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(android.view.View.GONE);
+        upgradeBtn.setVisibility(android.view.View.GONE);
+        recognizedFood = "";
+
+        // Use classifier to identify food
+        String foodName = classifier.classifyFood(image);
+
+        // If classifier returns "food", it means low confidence or no match
+        if (foodName.equals("food")) {
+            resultText.setText("❌ Could not identify food.\nTry taking a clearer photo.");
+            upgradeBtn.setVisibility(android.view.View.VISIBLE);
+            return;
+        }
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(foodName);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(android.view.View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            // Food recognized by AI but not in your database yet
+            recognizedFood = foodName;
+            resultText.setText("🔍 Recognized: " + foodName + "\n" +
+                    "⚠️ Not in your database yet.\n" +
+                    "Add it via CSV import or use 'Add to Database'");
+            useFoodBtn.setVisibility(android.view.View.VISIBLE);
+            useFoodBtn.setText("➕ Add \"" + foodName + "\" to database");
+            upgradeBtn.setVisibility(android.view.View.VISIBLE);
+            upgradeBtn.setText("📥 Import foods CSV to add 100+ foods");
+        }
+    }
+    //
+    //
+    private void recognizeFood_old1(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(android.view.View.GONE);
+        upgradeBtn.setVisibility(android.view.View.GONE);
+        recognizedFood = "";
+
+        // Use classifier to identify food
+        String foodName = classifier.classifyFood(image);
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(foodName);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(android.view.View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            resultText.setText("❌ Food not recognized.\nTake a clearer photo or enter manually.");
+            upgradeBtn.setVisibility(android.view.View.VISIBLE);
+            upgradeBtn.setText("🔓 Upgrade to recognize 100+ foods ($0.99)");
+        }
+    }
+    */
+
+
+    //
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+}

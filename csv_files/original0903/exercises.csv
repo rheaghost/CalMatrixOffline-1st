@@ -1,0 +1,29 @@
+name,met
+Walking slow,2.5
+Walking moderate,3.5
+Walking brisk,4.5
+Jogging,6.0
+Running,8.0
+Sprinting,12.0
+Cycling slow,4.0
+Cycling moderate,6.0
+Cycling fast,8.0
+Swimming slow,4.0
+Swimming moderate,6.0
+Swimming fast,8.0
+Weight Lifting,3.0
+Push-ups,3.0
+Pull-ups,3.5
+Squats,3.5
+Burpees,6.0
+Basketball,6.5
+Soccer,7.0
+Tennis,6.0
+Boxing,8.0
+Yoga,2.5
+Dancing,4.5
+Housework,2.5
+Gardening,3.0
+Walking Dog,3.5
+Climbing Stairs slow,4.0
+Climbing Stairs fast,8.0

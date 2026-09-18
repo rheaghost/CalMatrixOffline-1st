@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0b0b0e"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚖️ Weight"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Track your weight over time"
+            android:textColor="#888"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Current Weight -->
+        <TextView
+            android:id="@+id/latestWeightText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Current: -- kg"
+            android:textColor="#ccc"
+            android:textSize="18sp"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#1a1a1f" />
+
+        <TextView
+            android:id="@+id/changeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Log your weight to see changes"
+            android:textColor="#888"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="4dp" />
+
+        <!-- Input -->
+        <EditText
+            android:id="@+id/weightInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter weight (kg)"
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="16dp"
+            android:inputType="numberDecimal" />
+
+        <Button
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💾 Log Weight"
+            android:background="@drawable/rounded_button1"
+            android:textColor="#fff"
+            android:padding="14dp"
+            android:layout_marginTop="4dp" />
+
+        <Button
+            android:id="@+id/clearBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🗑️ Clear"
+            android:background="@drawable/rounded_button1"
+            android:textColor="#e74c3c"
+            android:padding="14dp"
+            android:layout_marginTop="4dp" />
+
+        <!-- Graph -->
+        <TextView
+            android:id="@+id/graphSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 No weight data yet"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.calmatrixoffline.SimpleChartView
+                    android:id="@+id/chartView"
+                    android:layout_width="500dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- History -->
+        <TextView
+            android:id="@+id/summaryText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="No weight entries yet"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="4dp"
+            android:background="#1a1a1f" />
+
+        <!-- Back Button -->
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            android:background="@drawable/rounded_button1"
+            android:textColor="#fff"
+            android:padding="14dp"
+            android:layout_marginTop="12dp" />
+
+    </LinearLayout>
+</ScrollView>

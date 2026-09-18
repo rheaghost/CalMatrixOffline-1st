@@ -1,0 +1,862 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0b0b0e"
+    android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📸 CalMatrix Offline"
+            android:textSize="32sp"
+            android:textStyle="bold"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Offline Calorie Tracker"
+            android:textColor="#888"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- ===== FOOD SECTION ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🍔 FOOD"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="8dp" />
+        <!--
+        <EditText
+            android:id="@+id/foodInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type food name..."
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="4dp" />
+            -->
+        <AutoCompleteTextView
+            android:id="@+id/foodInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type food name..."
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="4dp"
+            android:completionThreshold="1" />
+
+
+
+        <Button
+            android:id="@+id/searchFoodBtn"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_weight="1"
+            android:text="🔍 Search Food "
+            android:textSize="10sp"
+            android:background="@drawable/rounded_button_nav"
+            android:textColor="#7ddf7d"
+            android:padding="0dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:includeFontPadding="false"
+            android:singleLine="true"
+            android:gravity="center"
+            android:layout_marginStart="2dp"
+            android:layout_marginEnd="2dp" />
+
+        <!-- Food Result with Image -->
+        <ImageView
+            android:id="@+id/foodImage"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:scaleType="centerCrop"
+            android:layout_marginTop="4dp"
+            android:visibility="gone" />
+        <!-- Image Action Buttons -->
+            <LinearLayout
+                android:id="@+id/imageActionRow"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="4dp"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/addImageBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="📷 Add/Change"
+                    android:textSize="12sp"
+                    android:background="#2a2a32"
+                    android:textColor="#7ddf7d"
+                    android:singleLine="true"
+                    android:gravity="center" />
+
+                <Button
+                    android:id="@+id/deleteImageBtn"
+                    android:layout_width="0dp"
+                    android:layout_height="44dp"
+                    android:layout_weight="1"
+                    android:text="🗑️ Delete"
+                    android:textSize="12sp"
+                    android:background="#3a2a2a"
+                    android:textColor="#e74c3c"
+                    android:singleLine="true"
+                    android:gravity="center"
+                    android:layout_marginStart="4dp" />
+
+            </LinearLayout>
+        <TextView
+            android:id="@+id/resultFood"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="#1a1a1f"
+            android:textColor="#ccc"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp"
+            android:text="Enter a food name" />
+
+
+
+        <!-- ===== EXERCISE SECTION ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🏃 EXERCISE"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="12dp" />
+        <!--
+        <EditText
+            android:id="@+id/exerciseInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type exercise..."
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="4dp" />
+            -->
+
+        <AutoCompleteTextView
+            android:id="@+id/exerciseInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Type exercise (e.g., jogging)"
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="4dp"
+            android:completionThreshold="1" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <EditText
+                android:id="@+id/weightInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Weight (kg)"
+                android:textColor="#fff"
+                android:textColorHint="#666"
+                android:background="#121216"
+                android:padding="14dp"
+                android:inputType="numberDecimal" />
+
+            <EditText
+                android:id="@+id/durationInput"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Min"
+                android:textColor="#fff"
+                android:textColorHint="#666"
+                android:background="#121216"
+                android:padding="14dp"
+                android:inputType="number"
+                android:layout_marginStart="8dp" />
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/searchExerciseBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔍 Search Exercise"
+            android:background="@drawable/rounded_buttone"
+
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:layout_marginTop="4dp"
+            android:padding="12dp" />
+
+
+
+
+        <TextView
+            android:id="@+id/resultExercise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="12dp"
+            android:background="#1a1a1f"
+            android:textColor="#ccc"
+            android:textSize="13sp"
+            android:layout_marginTop="4dp"
+            android:text="Enter an exercise" />
+
+        <!-- ===== SUMMARY ===== -->
+        <TextView
+            android:id="@+id/dailyTotal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 Today: 0 cal"
+            android:textSize="18sp"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:padding="12dp"
+            android:background="#1a1a1f"
+            android:layout_marginTop="12dp" />
+
+        <TextView
+            android:id="@+id/budgetDisplay"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🎯 Budget: -- cal/day"
+            android:textColor="#888"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/todaySummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🍔 0 cal  |  🏃 -0 cal"
+            android:textColor="#888"
+            android:gravity="center"
+            android:textSize="12sp"
+            android:layout_marginTop="2dp" />
+
+        <TextView
+            android:id="@+id/streakText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔥 0 day streak"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:textSize="13sp"
+            android:layout_marginTop="2dp" />
+
+        <!-- ===== ACTION BUTTONS (Log / Clear / History) ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+
+
+
+            <Button
+                android:id="@+id/logBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Log"
+                android:textSize="13sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+            <Button
+                android:id="@+id/clearBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="Clear"
+                android:textSize="13sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+            <Button
+                android:id="@+id/viewAllBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="History"
+                android:textSize="13sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+            <Button
+                android:id="@+id/navHelpBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="❓Help"
+                android:textSize="13sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+        </LinearLayout>
+
+        <!-- Meal Macros Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+
+
+
+            <Button
+                android:id="@+id/saveMealBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="💾 Save as Meal"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+            <Button
+                android:id="@+id/myMealsBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📋 My Meals"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+            <Button
+                android:id="@+id/createMealBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="➕ Create Meal"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+        </LinearLayout>
+
+        <!-- ===== NAVIGATION (2 Rows for cleaner look) ===== -->
+        <!-- Row 1 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="6dp">
+
+
+
+            <Button
+                android:id="@+id/navProfileBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="👤Profile"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+            <Button
+                android:id="@+id/navWeightBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="⚖️Weight"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+            <Button
+                android:id="@+id/navWaterBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="💧   Water"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+            <Button
+                android:id="@+id/navSettingsBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="⚙️ Settings"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+        </LinearLayout>
+
+        <!-- Row 2 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+
+
+
+
+            <Button
+                android:id="@+id/navTrendsBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📊 Trends"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+.
+
+            <Button
+                android:id="@+id/navInsightsBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="💡Insights"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+
+
+
+
+
+            <Button
+                android:id="@+id/navBarcodeBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📱Barcode"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+            <Button
+                android:id="@+id/navVoiceBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="🗣️ Voice"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+
+
+
+            <Button
+                android:id="@+id/navCameraBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text=" 📸 Camera"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+
+
+
+            <Button
+                android:id="@+id/navImportBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📥 Import"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+
+            <Button
+                android:id="@+id/navExportBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📤 Export"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+        </LinearLayout>
+
+        <!-- Backup/Recovery Row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+
+
+            <Button
+                android:id="@+id/backupBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="💾 Backup"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+.
+
+            <Button
+                android:id="@+id/recoveryBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="🔄 Recovery"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp">
+
+
+            <Button
+                android:id="@+id/shareBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📤 Share"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+            <Button
+                android:id="@+id/exportUserFoodsBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📤 Foods"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+            <Button
+                android:id="@+id/dataBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📊 Data"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+            <Button
+                android:id="@+id/shareFoodBtn"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_weight="1"
+                android:text="📊 MyFoodShare"
+                android:textSize="10sp"
+                android:background="@drawable/rounded_button_nav"
+                android:textColor="#7ddf7d"
+                android:padding="0dp"
+                android:minHeight="0dp"
+                android:minWidth="0dp"
+                android:includeFontPadding="false"
+                android:singleLine="true"
+                android:gravity="center"
+                android:layout_marginStart="2dp"
+                android:layout_marginEnd="2dp" />
+
+
+
+
+        </LinearLayout>
+
+        <!-- ===== TODAY'S ENTRIES ===== -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📝 Today's Entries"
+            android:textColor="#7ddf7d"
+            android:textSize="13sp"
+            android:layout_marginTop="12dp" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/historyRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="150dp"
+            android:layout_marginTop="4dp"
+            android:background="#1a1a1f" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔒 All tracking offline · Voice offline on supported devices"
+            android:textColor="#444"
+            android:textSize="11sp"
+            android:gravity="center"
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>

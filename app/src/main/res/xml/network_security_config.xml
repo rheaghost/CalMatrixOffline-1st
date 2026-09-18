@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <domain includeSubdomains="true">images.google.com</domain>
+        <trust-anchors>
+            <certificates src="system" />
+        </trust-anchors>
+    </domain-config>
+    <!-- Optional: For debugging HTTP only, not for production -->
+    <!-- <debug-overrides>
+        <domain-config>
+            <domain includeSubdomains="true">10.0.2.2</domain>
+            <cleartextTrafficPermitted="true" />
+        </domain-config>
+    </debug-overrides> -->
+</network-security-config>

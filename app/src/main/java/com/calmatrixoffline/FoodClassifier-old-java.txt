@@ -1,0 +1,86 @@
+package com.calsnap1;
+//FoodClassifier.java
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import org.tensorflow.lite.Interpreter;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+
+public class FoodClassifier {
+    private Interpreter interpreter;
+    private static final int INPUT_SIZE = 224;
+    private static final int PIXEL_SIZE = 3;
+
+    // 10 food classes
+    private static final String[] FOODS = {
+            "cheeseburger", "chicken", "apple", "pizza", "rice",
+            "salmon", "egg", "banana", "ramen", "sushi"
+    };
+
+    public FoodClassifier(Context context) {
+        try {
+            // Load the model from assets
+            InputStream modelStream = context.getAssets().open("food_model.tflite");
+            byte[] modelBytes = new byte[modelStream.available()];
+            modelStream.read(modelBytes);
+            modelStream.close();
+
+            // Convert to ByteBuffer
+            ByteBuffer modelBuffer = ByteBuffer.allocateDirect(modelBytes.length);
+            modelBuffer.put(modelBytes);
+            modelBuffer.rewind();
+
+            interpreter = new Interpreter(modelBuffer);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String classifyFood(Bitmap bitmap) {
+        if (interpreter == null) return "food";
+
+        // Preprocess image
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true);
+        ByteBuffer inputBuffer = convertBitmapToByteBuffer(resized);
+
+        // Run inference
+        float[][] output = new float[1][FOODS.length];
+        interpreter.run(inputBuffer, output);
+
+        // Find best match
+        int bestIndex = 0;
+        float bestScore = 0;
+        for (int i = 0; i < FOODS.length; i++) {
+            if (output[0][i] > bestScore) {
+                bestScore = output[0][i];
+                bestIndex = i;
+            }
+        }
+
+        // Only return if confidence > 0.5
+        if (bestScore > 0.5) {
+            return FOODS[bestIndex];
+        }
+        return "food";
+    }
+
+    private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE * 4);
+        byteBuffer.order(ByteOrder.nativeOrder());
+
+        int[] pixels = new int[INPUT_SIZE * INPUT_SIZE];
+        bitmap.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+        for (int pixel : pixels) {
+            float r = ((pixel >> 16) & 0xFF) / 255.0f;
+            float g = ((pixel >> 8) & 0xFF) / 255.0f;
+            float b = (pixel & 0xFF) / 255.0f;
+            byteBuffer.putFloat(r);
+            byteBuffer.putFloat(g);
+            byteBuffer.putFloat(b);
+        }
+        return byteBuffer;
+    }
+}

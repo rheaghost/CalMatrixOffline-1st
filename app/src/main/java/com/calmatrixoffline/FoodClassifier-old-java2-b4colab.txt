@@ -1,0 +1,116 @@
+package com.calsnap1;
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.Color;
+import java.util.Random;
+
+public class FoodClassifier {
+    private static final String[] FOODS = {
+            "cheeseburger", "chicken", "apple", "pizza", "rice",
+            "salmon", "egg", "banana", "ramen", "sushi"
+    };
+
+    private boolean modelAvailable = false;
+    private Context context;
+
+    public FoodClassifier(Context context) {
+        this.context = context;
+        // Check if model exists
+        try {
+            context.getAssets().open("food_model.tflite");
+            modelAvailable = true;
+        } catch (Exception e) {
+            modelAvailable = false;
+        }
+    }
+
+    public String classifyFood(Bitmap bitmap) {
+        if (modelAvailable) {
+            // Use real model (future implementation)
+            return guessByColor(bitmap);
+        } else {
+            return guessByColor(bitmap);
+        }
+    }
+
+    private String guessByColor(Bitmap bitmap) {
+        // Get dominant color
+        int width = bitmap.getWidth();
+        int height = bitmap.getHeight();
+
+        int sampleSize = 50;
+        int r = 0, g = 0, b = 0;
+        int total = 0;
+
+        // Sample pixels evenly
+        for (int x = 0; x < width; x += width / sampleSize) {
+            for (int y = 0; y < height; y += height / sampleSize) {
+                int pixel = bitmap.getPixel(x, y);
+                r += Color.red(pixel);
+                g += Color.green(pixel);
+                b += Color.blue(pixel);
+                total++;
+            }
+        }
+
+        r /= total;
+        g /= total;
+        b /= total;
+
+        // ---------- SIMPLE COLOR-BASED RECOGNITION ----------
+        // BANANA: Yellow (r: 200-255, g: 180-255, b: 0-100)
+        if (r > 180 && g > 150 && b < 100 && g > r * 0.7) {
+            return "banana";
+        }
+
+        // APPLE: Red/Green (r: 150-255, g: 0-150, b: 0-100)
+        if (r > 150 && g < 150 && b < 100) {
+            return "apple";
+        }
+
+        // CHEESEBURGER: Brown/Red (r: 80-200, g: 40-150, b: 20-100)
+        if (r > 80 && r < 200 && g > 30 && g < 150 && b > 20 && b < 100) {
+            return "cheeseburger";
+        }
+
+        // PIZZA: Red/Orange/Yellow (r: 150-255, g: 80-200, b: 0-100)
+        if (r > 150 && g > 50 && g < 200 && b < 100) {
+            return "pizza";
+        }
+
+        // CHICKEN: White/Beige (r: 180-255, g: 150-220, b: 100-180)
+        if (r > 180 && g > 150 && g < 220 && b > 100 && b < 180) {
+            return "chicken";
+        }
+
+        // SALMON: Orange/Pink (r: 200-255, g: 100-180, b: 80-150)
+        if (r > 200 && g > 100 && g < 180 && b > 80 && b < 150) {
+            return "salmon";
+        }
+
+        // RICE: White (r: 200-255, g: 200-255, b: 200-255)
+        if (r > 200 && g > 200 && b > 200) {
+            return "rice";
+        }
+
+        // EGG: White with slight yellow (r: 200-255, g: 190-240, b: 150-210)
+        if (r > 200 && g > 190 && b > 150 && b < 210) {
+            return "egg";
+        }
+
+        // SUSHI: Green/White (r: 50-150, g: 80-200, b: 50-150) — seaweed/green
+        if (r > 50 && r < 150 && g > 80 && b > 50 && b < 150) {
+            return "sushi";
+        }
+
+        // RAMEN: Brown/Orange (r: 100-200, g: 60-140, b: 30-100)
+        if (r > 100 && r < 200 && g > 60 && g < 140 && b > 30 && b < 100) {
+            return "ramen";
+        }
+
+        // Default: return random
+        Random random = new Random();
+        return FOODS[random.nextInt(FOODS.length)];
+    }
+}

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0b0b0e"
+    android:padding="16dp">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📥 Import Data"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#f5b041"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Import CSV files one by one"
+        android:textColor="#888"
+        android:gravity="center"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Select a CSV file to import"
+        android:textColor="#ccc"
+        android:gravity="center"
+        android:padding="16dp"
+        android:background="#1a1a1f"
+        android:textSize="14sp"
+        android:layout_marginBottom="8dp"
+        android:minHeight="80dp" />
+
+    <TextView
+        android:id="@+id/statusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:textColor="#888"
+        android:textSize="12sp"
+        android:layout_marginBottom="16dp"
+        android:padding="8dp"
+        android:background="#121216" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📋 CSV Format Requirements:"
+        android:textColor="#7ddf7d"
+        android:textSize="13sp"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Foods: name,calories,protein,carbs,fat,serving"
+        android:textColor="#666"
+        android:textSize="11sp"
+        android:layout_marginTop="4dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Barcodes: barcode,name,calories,protein,carbs,fat,serving"
+        android:textColor="#666"
+        android:textSize="11sp" />
+
+    <Button
+        android:id="@+id/importFoodBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📂 Import Foods CSV"
+        android:background="#4CAF50"
+        android:textColor="#fff"
+        android:padding="14dp"
+        android:textSize="14sp"
+        android:layout_marginTop="8dp" />
+
+    <Button
+        android:id="@+id/importBarcodeBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📂 Import Barcodes CSV"
+        android:background="#FF9800"
+        android:textColor="#fff"
+        android:padding="14dp"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <Button
+        android:id="@+id/importExerciseBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="📂 Import Exercises CSV"
+        android:background="#2196F3"
+        android:textColor="#fff"
+        android:padding="14dp"
+        android:textSize="14sp"
+        android:layout_marginTop="4dp" />
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="← Back"
+        android:background="#2a2a32"
+        android:textColor="#fff"
+        android:padding="14dp"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

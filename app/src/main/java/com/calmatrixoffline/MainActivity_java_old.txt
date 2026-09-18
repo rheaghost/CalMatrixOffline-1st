@@ -1,0 +1,635 @@
+package com.calsnap1;
+
+import android.content.Intent;
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+public class MainActivity extends AppCompatActivity {
+
+    // Add this constant at the top of MainActivity
+    private static final int BARCODE_REQUEST_CODE = 300;
+
+    private static final int CAMERA_REQUEST_CODE = 400;
+    //private EditText foodInput, exerciseInput, weightInput, durationInput;
+    private EditText exerciseInput, weightInput, durationInput;
+    private AutoCompleteTextView foodInput;//26082520
+    private TextView resultFood, resultExercise, dailyTotal, todaySummary, streakText, budgetDisplay;
+    private RecyclerView historyRecyclerView;
+
+    private int currentFoodCalories = 0;
+    private int currentExerciseCalories = 0;
+    private String currentFoodName = "";
+    private String currentExerciseName = "";
+
+    private DatabaseHelper dbHelper;
+    private LogAdapter adapter;
+    private UserProfile userProfile;
+    private int dailyBudget = 2000;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        dbHelper = new DatabaseHelper(this);
+        userProfile = new UserProfile(this);
+
+        // ===== Initialize ALL Views =====
+        foodInput = findViewById(R.id.foodInput);
+        exerciseInput = findViewById(R.id.exerciseInput);
+        weightInput = findViewById(R.id.weightInput);
+        durationInput = findViewById(R.id.durationInput);
+        resultFood = findViewById(R.id.resultFood);
+        resultExercise = findViewById(R.id.resultExercise);
+        dailyTotal = findViewById(R.id.dailyTotal);
+        todaySummary = findViewById(R.id.todaySummary);
+        streakText = findViewById(R.id.streakText);
+        budgetDisplay = findViewById(R.id.budgetDisplay);
+        historyRecyclerView = findViewById(R.id.historyRecyclerView);
+
+        // ===== Setup RecyclerView =====
+        historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new LogAdapter(dbHelper.getTodayEntries(), this::onDeleteEntry);
+        historyRecyclerView.setAdapter(adapter);
+
+        // ===== Find ALL Buttons =====
+        Button searchFoodBtn = findViewById(R.id.searchFoodBtn);
+        Button searchExerciseBtn = findViewById(R.id.searchExerciseBtn);
+        Button logBtn = findViewById(R.id.logBtn);
+        Button clearBtn = findViewById(R.id.clearBtn);
+        Button viewAllBtn = findViewById(R.id.viewAllBtn);
+        Button navTrendsBtn = findViewById(R.id.navTrendsBtn);
+        Button navProfileBtn = findViewById(R.id.navProfileBtn);
+        Button navWeightBtn = findViewById(R.id.navWeightBtn);
+        Button navExportBtn = findViewById(R.id.navExportBtn);
+        Button navInsightsBtn = findViewById(R.id.navInsightsBtn);
+        Button navWaterBtn = findViewById(R.id.navWaterBtn);
+
+        // ===== Set Daily Budget =====
+        dailyBudget = userProfile.getDailyBudget();
+
+        // ===== Update UI =====
+        updateUI();
+
+        // ===== FOOD SEARCH =====
+        //autocomplete 26082520
+        // In onCreate()
+        //AutoCompleteTextView foodAutocomplete = findViewById(R.id.foodAutocomplete);
+
+// Get all food names from database
+        List<String> foodNames = dbHelper.getAllFoodNames();
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+                android.R.layout.simple_dropdown_item_1line, foodNames);
+        foodInput.setAdapter(adapter);
+
+// On item selected, search the food
+        foodInput.setOnItemClickListener((parent, view, position, id) -> {
+            String selected = (String) parent.getItemAtPosition(position);
+            searchFoodByName(selected);
+        });
+
+        //end autocomplete 26082520
+
+
+        //replace with sqlite searcv versio
+        // ---- Food Search ----
+        //26082520
+        searchFoodBtn.setOnClickListener(v -> {
+            String query = foodInput.getText().toString().trim();
+            if (!TextUtils.isEmpty(query)) {
+                searchFoodByName(query);
+            } else {
+                Toast.makeText(this, "Enter a food name", Toast.LENGTH_SHORT).show();
+            }
+        });
+        /*
+        searchFoodBtn.setOnClickListener(v -> {
+            String query = foodInput.getText().toString().trim();
+            if (TextUtils.isEmpty(query)) {
+                Toast.makeText(this, "Enter a food name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+
+
+            // SEARCH IN SQLITE DATABASE (imported foods)
+            DatabaseHelper.FoodItem food = dbHelper.searchFood(query);
+
+            if (food != null) {
+                currentFoodCalories = food.calories;
+                currentFoodName = food.name;
+                resultFood.setText("🍔 " + food.name + "\n" +
+                        "Calories: " + food.calories + " cal\n" +
+                        "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                        "Serving: " + food.serving);
+                updateUI();
+                Toast.makeText(this, "✅ Found: " + food.name, Toast.LENGTH_SHORT).show();
+            } else {
+                resultFood.setText("❌ No food found for: " + query + "\nTry importing foods first.");
+                currentFoodCalories = 0;
+                currentFoodName = "";
+                updateUI();
+            }
+        });
+
+         */
+
+        /*
+        searchFoodBtn.setOnClickListener(v -> {
+            String query = foodInput.getText().toString().trim();
+            if (TextUtils.isEmpty(query)) {
+                Toast.makeText(this, "Enter a food name", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            FoodDatabase.FoodItem food = FoodDatabase.search(query);
+            if (food != null) {
+                currentFoodCalories = food.calories;
+                currentFoodName = food.name;
+                resultFood.setText("🍔 " + food.name + "\n" +
+                        "Calories: " + food.calories + " cal\n" +
+                        "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                        "Serving: " + food.serving);
+                Toast.makeText(this, "✅ Found: " + food.name, Toast.LENGTH_SHORT).show();
+                updateUI();
+            } else {
+                resultFood.setText("❌ No food found for: " + query);
+                currentFoodCalories = 0;
+                currentFoodName = "";
+                updateUI();
+            }
+        });
+        */
+        // ---- Exercise Search ----
+        searchExerciseBtn.setOnClickListener(v -> {
+            String query = exerciseInput.getText().toString().trim();
+            String weightStr = weightInput.getText().toString().trim();
+            String durationStr = durationInput.getText().toString().trim();
+
+            if (TextUtils.isEmpty(query)) {
+                Toast.makeText(this, "Enter an exercise", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (TextUtils.isEmpty(weightStr) && userProfile.hasProfile()) {
+                weightStr = String.valueOf(userProfile.getWeight());
+                weightInput.setText(weightStr);
+            }
+
+            if (TextUtils.isEmpty(weightStr)) {
+                Toast.makeText(this, "Enter your weight (kg)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (TextUtils.isEmpty(durationStr)) {
+                Toast.makeText(this, "Enter duration (minutes)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                double weight = Double.parseDouble(weightStr);
+                int duration = Integer.parseInt(durationStr);
+
+                // SEARCH IN SQLITE DATABASE (imported exercises)
+                DatabaseHelper.ExerciseItem exercise = dbHelper.searchExercise(query);
+
+                if (exercise != null) {
+                    currentExerciseCalories = exercise.calculateCalories(weight, duration);
+                    currentExerciseName = exercise.name;
+                    resultExercise.setText("🏃 " + exercise.name + "\n" +
+                            "Calories burned: " + currentExerciseCalories + " cal\n" +
+                            "Duration: " + duration + " min\n" +
+                            "Weight: " + weight + " kg");
+                    Toast.makeText(this, "✅ Found: " + exercise.name, Toast.LENGTH_SHORT).show();
+                    updateUI();
+                } else {
+                    resultExercise.setText("❌ No exercise found for: " + query + "\nTry importing exercises first.");
+                    currentExerciseCalories = 0;
+                    currentExerciseName = "";
+                    updateUI();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Enter valid numbers", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+
+        /*
+        // ===== EXERCISE SEARCH =====
+        searchExerciseBtn.setOnClickListener(v -> {
+            String query = exerciseInput.getText().toString().trim();
+            String weightStr = weightInput.getText().toString().trim();
+            String durationStr = durationInput.getText().toString().trim();
+
+            if (TextUtils.isEmpty(query)) {
+                Toast.makeText(this, "Enter an exercise", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (TextUtils.isEmpty(weightStr) && userProfile.hasProfile()) {
+                weightStr = String.valueOf(userProfile.getWeight());
+                weightInput.setText(weightStr);
+            }
+
+            if (TextUtils.isEmpty(weightStr)) {
+                Toast.makeText(this, "Enter your weight (kg)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            if (TextUtils.isEmpty(durationStr)) {
+                Toast.makeText(this, "Enter duration (minutes)", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                double weight = Double.parseDouble(weightStr);
+                int duration = Integer.parseInt(durationStr);
+                ExerciseDatabase.ExerciseItem exercise = ExerciseDatabase.search(query);
+                if (exercise != null) {
+                    currentExerciseCalories = exercise.calculateCalories(weight, duration);
+                    currentExerciseName = exercise.name;
+                    resultExercise.setText("🏃 " + exercise.name + "\n" +
+                            "Calories burned: " + currentExerciseCalories + " cal\n" +
+                            "Duration: " + duration + " min\n" +
+                            "Weight: " + weight + " kg");
+                    Toast.makeText(this, "✅ Found: " + exercise.name, Toast.LENGTH_SHORT).show();
+                    updateUI();
+                } else {
+                    resultExercise.setText("❌ No exercise found for: " + query);
+                    currentExerciseCalories = 0;
+                    currentExerciseName = "";
+                    updateUI();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Enter valid numbers", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+         */
+
+        // ===== LOG =====
+        logBtn.setOnClickListener(v -> {
+            if (currentFoodCalories == 0 && currentExerciseCalories == 0) {
+                Toast.makeText(this, "Search a food or exercise first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            int net = currentFoodCalories - currentExerciseCalories;
+            String foodName = TextUtils.isEmpty(currentFoodName) ? "None" : currentFoodName;
+            String exerciseName = TextUtils.isEmpty(currentExerciseName) ? "None" : currentExerciseName;
+            long id = dbHelper.insertLog(foodName, currentFoodCalories, exerciseName, currentExerciseCalories, net);
+            if (id != -1) {
+                Toast.makeText(this, "✅ Logged: Net " + net + " cal", Toast.LENGTH_SHORT).show();
+                // Reset
+                currentFoodCalories = 0;
+                currentExerciseCalories = 0;
+                currentFoodName = "";
+                currentExerciseName = "";
+                resultFood.setText("Enter a food name above");
+                resultExercise.setText("Enter an exercise above");
+                foodInput.setText("");
+                exerciseInput.setText("");
+                durationInput.setText("");
+                if (userProfile.hasProfile()) {
+                    weightInput.setText(String.valueOf(userProfile.getWeight()));
+                }
+                updateUI();
+            } else {
+                Toast.makeText(this, "❌ Failed to log", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // ===== CLEAR =====
+        clearBtn.setOnClickListener(v -> {
+            currentFoodCalories = 0;
+            currentExerciseCalories = 0;
+            currentFoodName = "";
+            currentExerciseName = "";
+            resultFood.setText("Enter a food name above");
+            resultExercise.setText("Enter an exercise above");
+            foodInput.setText("");
+            exerciseInput.setText("");
+            durationInput.setText("");
+            if (userProfile.hasProfile()) {
+                weightInput.setText(String.valueOf(userProfile.getWeight()));
+            }
+            updateUI();
+            Toast.makeText(this, "Cleared", Toast.LENGTH_SHORT).show();
+        });
+
+        //image recog camera btn 208201949
+        Button navCameraBtn = findViewById(R.id.navCameraBtn);
+        navCameraBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, CameraActivity.class);
+            startActivityForResult(intent, CAMERA_REQUEST_CODE);
+        });
+
+        // ===== HISTORY =====
+        viewAllBtn.setOnClickListener(v -> showHistoryDialog());
+
+        // ===== NAVIGATION =====
+        navTrendsBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, TrendsActivity.class));
+        });
+
+        navProfileBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, ProfileActivity.class));
+        });
+
+        navWeightBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, WeightActivity.class));
+        });
+
+        navExportBtn.setOnClickListener(v -> {
+            exportData();
+        });
+
+        navInsightsBtn.setOnClickListener(v -> {
+            showInsights();
+        });
+
+        navWaterBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, WaterActivity.class));
+        });
+
+        /*
+        Button navBarcodeBtn = findViewById(R.id.navBarcodeBtn);
+        navBarcodeBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, BarcodeActivity.class));
+        });*/
+
+
+        Button navImportBtn = findViewById(R.id.navImportBtn);
+        navImportBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, ImportActivity.class));
+        });
+        //voice 2608200355
+        /*
+        Button navVoiceBtn = findViewById(R.id.navVoiceBtn);
+        navVoiceBtn.setOnClickListener(v -> {
+            startActivity(new Intent(this, VoiceActivity.class));
+        });
+
+         */
+
+        // When starting BarcodeActivity, use startActivityForResult
+        Button navBarcodeBtn = findViewById(R.id.navBarcodeBtn);
+        navBarcodeBtn.setOnClickListener(v -> {
+            Intent intent = new Intent(this, BarcodeActivity.class);
+            startActivityForResult(intent, BARCODE_REQUEST_CODE);
+        });
+
+
+
+    }
+
+    // ===== UPDATE UI =====
+    private void updateUI() {
+        int totalFood = dbHelper.getTodayTotalFoodCalories();
+        int totalExercise = dbHelper.getTodayTotalExerciseCalories();
+        int totalNet = dbHelper.getTodayTotalNetCalories();
+        int streak = dbHelper.getStreak();
+
+        dailyBudget = userProfile.getDailyBudget();
+
+        if (userProfile.hasProfile()) {
+            budgetDisplay.setText("🎯 Budget: " + dailyBudget + " cal/day");
+        } else {
+            budgetDisplay.setText("🎯 Budget: " + dailyBudget + " cal/day (default)");
+        }
+
+        dailyTotal.setText("📊 Today: " + totalNet + " / " + dailyBudget + " cal");
+        todaySummary.setText("🍔 " + totalFood + " cal  |  🏃 -" + totalExercise + " cal");
+        streakText.setText("🔥 " + streak + " day streak");
+
+        adapter.updateData(dbHelper.getTodayEntries());
+    }
+
+    // ===== DELETE ENTRY =====
+    private void onDeleteEntry(int id) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Entry")
+                .setMessage("Delete this entry?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    dbHelper.deleteEntry(id);
+                    updateUI();
+                    Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    // ===== HISTORY DIALOG =====
+    private void showHistoryDialog() {
+        List<LogEntry> entries = dbHelper.getAllEntries();
+        if (entries.isEmpty()) {
+            Toast.makeText(this, "No entries yet", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        StringBuilder sb = new StringBuilder();
+        sb.append("📋 Last 30 Days\n\n");
+        for (LogEntry entry : entries) {
+            String food = entry.getFoodName().equals("None") ? "" : "🍔 " + entry.getFoodName() + " (" + entry.getFoodCalories() + " cal)";
+            String exercise = entry.getExerciseName().equals("None") ? "" : "🏃 " + entry.getExerciseName() + " (-" + entry.getExerciseCalories() + " cal)";
+            String line = entry.getDate() + " ";
+            if (!food.isEmpty()) line += food;
+            if (!food.isEmpty() && !exercise.isEmpty()) line += " | ";
+            if (!exercise.isEmpty()) line += exercise;
+            line += " = " + entry.getNetCalories() + " cal\n";
+            sb.append(line);
+        }
+        new AlertDialog.Builder(this)
+                .setTitle("📊 Full History")
+                .setMessage(sb.toString())
+                .setPositiveButton("OK", null)
+                .show();
+    }
+
+    // ===== EXPORT =====
+
+    //export to text file, bfallback to clipboard 2608200741
+    private void exportData() {
+        String csv = dbHelper.exportToCSV();
+
+        // Get current date for filename
+        String dateStr = new SimpleDateFormat("yyyyMMdd", Locale.getDefault()).format(new Date());
+        String filename = "CalSnapExport_" + dateStr + ".txt";
+
+        // Save to Downloads folder
+        try {
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(
+                    android.os.Environment.getExternalStoragePublicDirectory(
+                            android.os.Environment.DIRECTORY_DOWNLOADS
+                    ) + "/" + filename
+            );
+            fos.write(csv.getBytes());
+            fos.close();
+
+            Toast.makeText(this, "✅ Exported to Downloads/" + filename, Toast.LENGTH_LONG).show();
+
+            new AlertDialog.Builder(this)
+                    .setTitle("📤 Export Complete")
+                    .setMessage("File saved to:\nDownloads/" + filename + "\n\n" + csv)
+                    .setPositiveButton("OK", null)
+                    .show();
+
+        } catch (Exception e) {
+            // Fallback: clipboard copy if file save fails
+            new AlertDialog.Builder(this)
+                    .setTitle("📤 Export Data")
+                    .setMessage("Could not save file.\nCopy CSV data to clipboard?\n\n" + csv)
+                    .setPositiveButton("Copy", (dialog, which) -> {
+                        android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                                getSystemService(CLIPBOARD_SERVICE);
+                        android.content.ClipData clip = android.content.ClipData.newPlainText("CalSnap Data", csv);
+                        clipboard.setPrimaryClip(clip);
+                        Toast.makeText(this, "✅ Copied to clipboard", Toast.LENGTH_SHORT).show();
+                    })
+                    .setNegativeButton("Close", null)
+                    .show();
+        }
+    }
+
+
+    private void exportData_Old() {
+        String csv = dbHelper.exportToCSV();
+        new AlertDialog.Builder(this)
+                .setTitle("📤 Export Data")
+                .setMessage("Copy CSV data:\n\n" + csv)
+                .setPositiveButton("Copy", (dialog, which) -> {
+                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager)
+                            getSystemService(CLIPBOARD_SERVICE);
+                    android.content.ClipData clip = android.content.ClipData.newPlainText("CalSnap Data", csv);
+                    clipboard.setPrimaryClip(clip);
+                    Toast.makeText(this, "✅ Copied to clipboard", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Close", null)
+                .show();
+    }
+
+    // ===== INSIGHTS =====
+    private void showInsights() {
+        int totalNet = dbHelper.getTodayTotalNetCalories();
+        int totalFood = dbHelper.getTodayTotalFoodCalories();
+        int totalExercise = dbHelper.getTodayTotalExerciseCalories();
+        int streak = dbHelper.getStreak();
+        int budget = userProfile.getDailyBudget();
+        int entries = dbHelper.getTodayEntryCount();
+
+        StringBuilder insights = new StringBuilder();
+
+        if (entries == 0) {
+            insights.append("📝 No entries logged today.\nStart logging to track your progress!\n\n");
+        } else if (totalNet > budget + 200) {
+            insights.append("⚠️ You're OVER budget by " + (totalNet - budget) + " cal today.\nTry adding some exercise.\n\n");
+        } else if (totalNet < budget - 200) {
+            insights.append("✅ You're UNDER budget by " + (budget - totalNet) + " cal today.\nGreat job!\n\n");
+        } else {
+            insights.append("✅ You're ON TRACK today!\nKeep up the good work!\n\n");
+        }
+
+        if (totalExercise == 0 && totalFood > 0) {
+            insights.append("🏃 No exercise logged today.\nEven a 20-minute walk helps!\n\n");
+        } else if (totalExercise > 300) {
+            insights.append("🏃 Great workout! You burned " + totalExercise + " cal.\n\n");
+        }
+
+        if (streak > 0) {
+            insights.append("🔥 " + streak + "-day logging streak!\n");
+            if (streak >= 7) {
+                insights.append("Amazing consistency!\n");
+            } else {
+                insights.append("Keep going!\n");
+            }
+        }
+
+        if (insights.length() > 0) {
+            new AlertDialog.Builder(this)
+                    .setTitle("💡 Daily Insights")
+                    .setMessage(insights.toString())
+                    .setPositiveButton("OK", null)
+                    .show();
+        } else {
+            Toast.makeText(this, "Log some food or exercise to get insights!", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == BARCODE_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                String foodName = data.getStringExtra("FOOD_NAME");
+                if (foodName != null && !foodName.isEmpty()) {
+                    // Auto-fill the food input field
+                    foodInput.setText(foodName);
+
+                    // Automatically search the food
+                    searchFoodByName(foodName);
+
+                    Toast.makeText(this, "📱 Loaded: " + foodName, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }else if (requestCode == CAMERA_REQUEST_CODE && resultCode == RESULT_OK) {
+            if (data != null) {
+                String foodName = data.getStringExtra("FOOD_NAME");
+                if (foodName != null && !foodName.isEmpty()) {
+                    // Auto-fill the food input field
+                    foodInput.setText(foodName);
+
+                    // Automatically search the food
+                    searchFoodByName(foodName);
+
+                    Toast.makeText(this, "📸 Found: " + foodName, Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+
+
+    }
+
+    // Extract food search logic to a separate method
+    private void searchFoodByName(String query) {
+        FoodDatabase.FoodItem food = FoodDatabase.search(query);
+        if (food != null) {
+            currentFoodCalories = food.calories;
+            currentFoodName = food.name;
+            resultFood.setText("🍔 " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                    "Serving: " + food.serving);
+            updateUI();
+            Toast.makeText(this, "✅ Found: " + food.name, Toast.LENGTH_SHORT).show();
+        } else {
+            resultFood.setText("❌ No food found for: " + query);
+            currentFoodCalories = 0;
+            currentFoodName = "";
+            updateUI();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        dailyBudget = userProfile.getDailyBudget();
+        if (userProfile.hasProfile()) {
+            weightInput.setText(String.valueOf(userProfile.getWeight()));
+        }
+        updateUI();
+    }
+}

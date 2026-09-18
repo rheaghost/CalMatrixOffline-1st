@@ -1,0 +1,100 @@
+name,calories,protein,carbs,fat,serving
+Pizza,285,12,36,10,1 slice
+Cheeseburger,303,15,30,13,1 sandwich
+Hot Dog,290,10,29,15,1 serving
+Taco,200,10,20,10,1 taco
+Burrito,400,15,45,18,1 burrito
+Fried Chicken,320,21,18,19,1 piece
+French Fries,365,4,47,17,1 medium
+Onion Rings,300,4,35,16,1 serving
+Ramen,450,18,55,16,1 bowl
+Pho,350,16,45,12,1 bowl
+Fried Rice,330,8,45,12,1 cup
+Sushi,280,12,45,5,6 pieces
+Dumplings,80,4,10,3,1 piece
+Spring Rolls,80,2,12,3,1 piece
+Kimchi,25,1.5,4,0.5,1 cup
+Chicken Breast,165,31,0,3.6,1 breast
+Steak,210,26,0,12,100g
+Pork Chop,240,22,0,16,1 chop
+Salmon,367,40,0,22,1 fillet
+Tuna,130,28,0,1,100g
+Bacon,86,6,0.5,7,2 slices
+Sausage,180,12,2,14,1 link
+Egg,140,12,1,10,2 eggs
+Rice,206,4.3,45,0.4,1 cup
+Brown Rice,216,5,45,1.8,1 cup
+Pasta,221,8,43,1.3,1 cup
+Bread,79,2.5,15,1,1 slice
+Toast,79,2.5,15,1,1 slice
+Oatmeal,166,6,28,3.6,1 cup
+Pancake,130,4,18,5,1 pancake
+Waffle,240,6,30,10,1 waffle
+Salad,45,3,8,0.8,1 bowl
+Broccoli,55,3.7,11,0.6,1 cup
+Carrot,52,1.2,12,0.3,1 cup
+Corn,132,4.6,29,1.9,1 cup
+Potato,161,4.3,37,0.2,1 medium
+Sweet Potato,180,4,41,0.3,1 medium
+Tomato,22,1.1,4.8,0.2,1 medium
+Avocado,160,2,9,15,1/2 fruit
+Spinach,23,2.9,3.6,0.4,1 cup
+Kale,33,3,6,0.6,1 cup
+Apple,95,0.5,25,0.3,1 medium
+Banana,105,1.3,27,0.4,1 medium
+Orange,62,1.2,15,0.2,1 medium
+Strawberry,49,1,12,0.5,1 cup
+Grape,62,0.6,16,0.3,1 cup
+Watermelon,46,0.9,11,0.2,1 cup
+Mango,100,1.4,25,0.6,1 cup
+Milk,149,8,12,8,1 cup
+Yogurt,100,17,6,0.5,1 container
+Cheese,80,5,0.5,7,1 slice
+Butter,102,0.1,0,11.5,1 tbsp
+Ice Cream,207,3.5,24,11,1 scoop
+Coffee,2,0,0,0,1 cup
+Tea,2,0,0,0,1 cup
+Juice,112,1.7,25,0.5,1 cup
+Soda,150,0,39,0,1 can
+Ketchup,15,0.2,4,0,1 tbsp
+Mayonnaise,94,0.1,0.1,10,1 tbsp
+Mustard,5,0.3,0.5,0.3,1 tsp
+Soy Sauce,10,1.5,1,0,1 tbsp
+Hot Sauce,2,0.1,0.5,0,1 tsp
+BBQ Sauce,30,0.5,7,0,1 tbsp
+Salsa,10,0.5,2,0,1 tbsp
+Hummus,80,2.5,7,5,2 tbsp
+Guacamole,25,0.5,1.5,2.5,1 tbsp
+Chips,160,2,15,10,1 oz
+Cookies,160,1,22,7,3 cookies
+Donut,250,4,31,14,1 donut
+Cake,250,3,35,10,1 slice
+Chocolate,210,2.5,24,12,1 bar
+Candy,120,0.5,28,1,1 serving
+Popcorn,30,1,6,0.5,1 cup
+Pretzel,180,5,36,2,1 large
+Cereal,150,3,30,2,1 cup
+Granola,300,10,40,12,1 cup
+Muffin,320,5,40,15,1 muffin
+Bagel,250,10,48,2,1 bagel
+English Muffin,130,4,26,1,1 muffin
+Croissant,260,5,30,14,1 croissant
+Mushroom,15,2.2,2,0.2,1 cup
+Zucchini,19,1.4,3.5,0.3,1 cup
+Eggplant,20,0.8,5,0.2,1 cup
+Asparagus,27,2.9,5,0.2,1 cup
+Green Beans,34,2,8,0.2,1 cup
+Peas,117,8,21,0.4,1 cup
+Cabbage,22,1.1,5,0.1,1 cup
+Cauliflower,27,2,5,0.3,1 cup
+Brussels Sprouts,56,4,11,0.8,1 cup
+Almonds,170,6,6,15,1 handful
+Walnuts,185,4.3,3.9,18.5,1 handful
+Cashews,157,5.2,8.6,12.4,1 handful
+Pistachios,160,6,8,13,1 handful
+Peanut Butter,94,4,3.5,8,1 tbsp
+Tofu,70,8,2,4,100g
+Black Beans,114,8,20,0.5,1/2 cup
+Kidney Beans,110,8,20,0.5,1/2 cup
+Lentils,115,9,20,0.4,1/2 cup
+Chickpeas,135,7,22,2,1/2 cup

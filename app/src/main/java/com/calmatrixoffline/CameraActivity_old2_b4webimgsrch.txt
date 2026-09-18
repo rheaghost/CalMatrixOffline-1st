@@ -1,0 +1,346 @@
+package com.calsnap1;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Bundle;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.View;
+import android.webkit.ValueCallback;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
+public class CameraActivity extends AppCompatActivity {
+    private static final int CAMERA_REQUEST = 100;
+    private static final int GALLERY_REQUEST = 101;
+
+    private ImageView photoPreview;
+    private TextView resultText;
+    private Button captureBtn, galleryBtn, useFoodBtn, backBtn;
+    private Button fixBtn;  // The fix button
+
+    private DatabaseHelper dbHelper;
+    private FoodClassifier classifier;
+
+    private Bitmap capturedImage;
+    private String recognizedFood = "";  // The food name recognized (could be corrected later)
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
+
+        // Initialize database helper and classifier
+        dbHelper = new DatabaseHelper(this);
+        classifier = new FoodClassifier(this);
+
+        // Find views
+        photoPreview = findViewById(R.id.photoPreview);
+        resultText = findViewById(R.id.resultText);
+        captureBtn = findViewById(R.id.captureBtn);
+        galleryBtn = findViewById(R.id.galleryBtn);
+        useFoodBtn = findViewById(R.id.useFoodBtn);
+        fixBtn = findViewById(R.id.fixBtn);
+        backBtn = findViewById(R.id.backBtn);
+
+        // Initially hide the use and fix buttons
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+
+        // Capture button
+        captureBtn.setOnClickListener(v -> {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            } else {
+                Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Gallery button
+        galleryBtn.setOnClickListener(v -> {
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto, GALLERY_REQUEST);
+        });
+
+        // Back button
+        backBtn.setOnClickListener(v -> finish());
+
+        // Use Food button (sends result back to MainActivity)
+        useFoodBtn.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(recognizedFood)) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("FOOD_NAME", recognizedFood);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            } else {
+                Toast.makeText(this, "No food recognized or corrected", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Fix button — always visible after recognition
+        fixBtn.setOnClickListener(v -> showFixDialog());
+    }
+
+    // ------------------------------------------------------------------------
+    // Camera / Gallery result
+    // ------------------------------------------------------------------------
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            if (photo != null) {
+                capturedImage = photo;
+                photoPreview.setImageBitmap(photo);
+                recognizeFood(photo);
+            }
+        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            if (data != null) {
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(
+                            this.getContentResolver(), data.getData());
+                    if (photo != null) {
+                        capturedImage = photo;
+                        photoPreview.setImageBitmap(photo);
+                        recognizeFood(photo);
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }
+
+    // ------------------------------------------------------------------------
+    // Recognition logic
+    // ------------------------------------------------------------------------
+    private void recognizeFood(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        recognizedFood = "";
+
+        // Get classification result (returns food name + confidence)
+        FoodClassifier.ClassificationResult result = classifier.classifyFood(image, dbHelper);
+
+        String modelOutput = result.foodName;
+        float confidence = result.confidence;
+
+        // If low confidence, ask user to retake photo
+        if (modelOutput.equals("food") || confidence < 0.5f) {
+            resultText.setText("❌ Unclear photo.\nConfidence: " + String.format("%.0f%%", confidence * 100) +
+                    "\nPlease try again with a clearer photo.");
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Enter food name...");
+            return;
+        }
+
+        // Show confidence in result
+        String confidenceText = "Confidence: " + String.format("%.0f%%", confidence * 100);
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(modelOutput);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                    confidenceText);
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            recognizedFood = modelOutput;
+            resultText.setText("🔍 Recognized: " + modelOutput + "\n" +
+                    confidenceText + "\n" +
+                    "⚠️ Not in your database yet.");
+            useFoodBtn.setVisibility(View.GONE);
+        }
+
+        // Always show Fix button
+        fixBtn.setVisibility(View.VISIBLE);
+        fixBtn.setText("✏️ Fix: This is actually...");
+    }
+
+
+
+
+
+    /*
+    private void recognizeFood(Bitmap image) {
+        // Reset UI
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        recognizedFood = "";
+
+        // Get the model's best guess
+        String modelOutput = classifier.classifyFood(image, dbHelper);
+
+        // If the model returns "food" or null, it means low confidence
+        if (TextUtils.isEmpty(modelOutput) || modelOutput.equals("food")) {
+            resultText.setText("❌ Could not identify food.\nTry taking a clearer photo.");
+            // Still show the fix button so the user can enter the name manually
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Enter food name...");
+            return;
+        }
+
+        // Store the raw model output for correction purposes
+        String rawModelOutput = modelOutput;
+
+        // Check if the food exists in the database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(modelOutput);
+
+        if (food != null) {
+            // Food found in database
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g");
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            // Food not in database
+            recognizedFood = modelOutput;
+            resultText.setText("🔍 Recognized: " + modelOutput + "\n" +
+                    "⚠️ Not in your database yet.");
+            useFoodBtn.setVisibility(View.GONE);
+        }
+
+        // Always show the Fix button
+        fixBtn.setVisibility(View.VISIBLE);
+        fixBtn.setText("✏️ Fix: This is actually...");
+
+        // Update the fix button's click listener to capture the current model output
+        fixBtn.setOnClickListener(v -> showFixDialog(rawModelOutput));
+    }
+    */
+
+    // ------------------------------------------------------------------------
+    // Fix / Correction dialog
+    // ------------------------------------------------------------------------
+    private void showFixDialog() {
+        // If we have no recognized food, use the raw model output if available
+        final String currentGuess = recognizedFood.isEmpty() ? "food" : recognizedFood;
+        showFixDialog(currentGuess);
+    }
+
+    private void showFixDialog(final String modelOutput) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correct Food Name");
+        builder.setMessage("What food is this actually?");
+
+        final EditText input = new EditText(this);
+        input.setHint("e.g., Pizza");
+        input.setText(recognizedFood.isEmpty() ? modelOutput : recognizedFood);
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String userCorrection = input.getText().toString().trim();
+            if (!userCorrection.isEmpty()) {
+                // Save the correction: model output -> user correction
+                dbHelper.saveCorrection(modelOutput, userCorrection);
+                recognizedFood = userCorrection;
+                resultText.setText("✅ Saved: " + userCorrection);
+                Toast.makeText(this, "Correction saved!", Toast.LENGTH_SHORT).show();
+
+                // Update the Use button to use the corrected name
+                useFoodBtn.setVisibility(View.VISIBLE);
+                useFoodBtn.setText("📝 Use \"" + userCorrection + "\"");
+                // Update the click listener to send the corrected name
+                useFoodBtn.setOnClickListener(v -> {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("FOOD_NAME", userCorrection);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                });
+            } else {
+                Toast.makeText(this, "No correction entered", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+
+    //2608261944 web img search
+
+    private void uploadImageForSearch(Bitmap bitmap) {
+        // Save bitmap to a temporary file
+        File imageFile = new File(getCacheDir(), "temp_search.jpg");
+        try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 80, fos);
+            fos.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        // Upload and get search URL
+        new Thread(() -> {
+            try {
+                GoogleImageSearch search = new GoogleImageSearch();
+                String searchUrl = search.uploadAndGetSearchUrl(imageFile);
+
+                runOnUiThread(() -> {
+                    if (searchUrl != null) {
+                        // Open search URL in WebView
+                        openWebViewWithResult(searchUrl);
+                    } else {
+                        Toast.makeText(this, "Search failed, try again", Toast.LENGTH_SHORT).show();
+                    }
+                });
+            } catch (IOException e) {
+                e.printStackTrace();
+                runOnUiThread(() -> Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+            }
+        }).start();
+    }
+
+    private void openWebViewWithResult(String url) {
+        WebView webView = new WebView(this);
+        webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // Wait for page to load, then extract "Best Guess"
+                view.evaluateJavascript(
+                        "document.querySelector('div[jsname]')?.innerText || " +
+                                "document.querySelector('div[data-attrid]')?.innerText || " +
+                                "document.querySelector('h2')?.innerText || " +
+                                "'Not found'",
+                        new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                String foodName = value.replace("\"", "").trim();
+                                if (!foodName.isEmpty() && !foodName.equals("Not found")) {
+                                    Toast.makeText(CameraActivity.this, "Found: " + foodName, Toast.LENGTH_LONG).show();
+                                    // Use the food name
+                                }
+                            }
+                        }
+                );
+            }
+        });
+        webView.loadUrl(url);
+    }
+}

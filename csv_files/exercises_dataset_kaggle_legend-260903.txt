@@ -1,0 +1,3 @@
+https://www.kaggle.com/datasets/aadhavvignesh/calories-burned-during-exercise-and-activities
+exercises calories csv
+2609031713

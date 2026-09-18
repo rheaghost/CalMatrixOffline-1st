@@ -1,0 +1,277 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0b0b0e"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="👤 Profile"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/savedStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="⚠️ No profile saved yet"
+            android:textColor="#e67e22"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <!-- Basic Info -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📋 Basic Info"
+            android:textColor="#7ddf7d"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/weightInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Weight (kg)"
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="4dp"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/heightInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Height (cm)"
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:inputType="numberDecimal" />
+
+        <EditText
+            android:id="@+id/ageInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Age"
+            android:textColor="#fff"
+            android:textColorHint="#666"
+            android:background="#121216"
+            android:padding="14dp"
+            android:layout_marginTop="8dp"
+            android:inputType="number" />
+
+        <!-- Gender -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Gender"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/genderGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/genderMale"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="👨 Male"
+                android:textColor="#fff"
+                android:buttonTint="#f5b041" />
+
+            <RadioButton
+                android:id="@+id/genderFemale"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="👩 Female"
+                android:textColor="#fff"
+                android:buttonTint="#f5b041" />
+        </RadioGroup>
+
+        <!-- Activity Level -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Activity Level"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/activityGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/activitySedentary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Sedentary (office job, no exercise)"
+                android:textColor="#ccc"
+                android:buttonTint="#f5b041"
+                android:padding="4dp" />
+
+            <RadioButton
+                android:id="@+id/activityLight"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Light (exercise 1-2 days/week)"
+                android:textColor="#ccc"
+                android:buttonTint="#f5b041"
+                android:padding="4dp" />
+
+            <RadioButton
+                android:id="@+id/activityModerate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Moderate (exercise 3-5 days/week)"
+                android:textColor="#ccc"
+                android:buttonTint="#f5b041"
+                android:padding="4dp" />
+
+            <RadioButton
+                android:id="@+id/activityActive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Active (exercise 6-7 days/week)"
+                android:textColor="#ccc"
+                android:buttonTint="#f5b041"
+                android:padding="4dp" />
+
+            <RadioButton
+                android:id="@+id/activityVeryActive"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Very Active (athlete, physical job)"
+                android:textColor="#ccc"
+                android:buttonTint="#f5b041"
+                android:padding="4dp" />
+        </RadioGroup>
+
+        <!-- Goal -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Goal"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:layout_marginTop="16dp" />
+
+        <RadioGroup
+            android:id="@+id/goalGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="4dp">
+
+            <RadioButton
+                android:id="@+id/goalLose"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⬇️ Lose"
+                android:textColor="#fff"
+                android:buttonTint="#e74c3c" />
+
+            <RadioButton
+                android:id="@+id/goalMaintain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="➡️ Maintain"
+                android:textColor="#fff"
+                android:buttonTint="#f5b041" />
+
+            <RadioButton
+                android:id="@+id/goalGain"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="⬆️ Gain"
+                android:textColor="#fff"
+                android:buttonTint="#2ecc71" />
+        </RadioGroup>
+
+        <!-- Results -->
+        <TextView
+            android:id="@+id/bmrResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:background="#1a1a1f"
+            android:textColor="#ccc"
+            android:layout_marginTop="16dp"
+            android:text="🔥 Enter your details and tap Calculate" />
+
+        <TextView
+            android:id="@+id/budgetResult"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="14dp"
+            android:background="#1a1a1f"
+            android:textColor="#f5b041"
+            android:layout_marginTop="8dp"
+            android:text="🎯 Daily Budget: -- cal/day" />
+
+        <!-- Buttons -->
+        <Button
+            android:id="@+id/calculateBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🧮 Calculate"
+            android:background="@drawable/rounded_button2"
+            android:textColor="#7ddf7d"
+            android:padding="14dp"
+            android:layout_marginTop="12dp" />
+
+        <Button
+            android:id="@+id/saveBtn"
+
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💾 Save Profile"
+            android:background="@drawable/rounded_button2"
+            android:textColor="#fff"
+            android:padding="14dp"
+            android:layout_marginTop="8dp" />
+
+        <Button
+            android:id="@+id/clearProfileBtn"
+
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🗑️ Clear Profile"
+
+            android:background="@drawable/rounded_button2"
+            android:textColor="#e74c3c"
+            android:padding="14dp"
+            android:layout_marginTop="8dp" />
+
+    </LinearLayout>
+</ScrollView>

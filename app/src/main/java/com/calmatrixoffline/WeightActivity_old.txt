@@ -1,0 +1,121 @@
+package com.calsnap1;
+
+import android.os.Bundle;
+import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
+import android.widget.Toast;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
+import java.util.List;
+
+public class WeightActivity extends AppCompatActivity {
+    private EditText weightInput;
+    private TextView latestWeightText, changeText, summaryText;
+    private RecyclerView historyRecyclerView;
+    private Button saveBtn, clearBtn, backBtn;
+    private DatabaseHelper dbHelper;
+    private WeightAdapter adapter;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_weight);
+
+        dbHelper = new DatabaseHelper(this);
+
+        weightInput = findViewById(R.id.weightInput);
+        latestWeightText = findViewById(R.id.latestWeightText);
+        changeText = findViewById(R.id.changeText);
+        summaryText = findViewById(R.id.summaryText);
+        historyRecyclerView = findViewById(R.id.historyRecyclerView);
+        saveBtn = findViewById(R.id.saveBtn);
+        clearBtn = findViewById(R.id.clearBtn);
+        backBtn = findViewById(R.id.backBtn);
+
+        historyRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        adapter = new WeightAdapter(dbHelper.getWeightHistory(), this::onDeleteEntry);
+        historyRecyclerView.setAdapter(adapter);
+
+        UserProfile profile = new UserProfile(this);
+        if (profile.hasProfile()) {
+            weightInput.setText(String.valueOf(profile.getWeight()));
+        }
+
+        updateUI();
+
+        saveBtn.setOnClickListener(v -> {
+            String weightStr = weightInput.getText().toString().trim();
+            if (TextUtils.isEmpty(weightStr)) {
+                Toast.makeText(this, "Enter your weight", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            try {
+                double weight = Double.parseDouble(weightStr);
+                if (weight <= 0 || weight > 500) {
+                    Toast.makeText(this, "Please enter a valid weight", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                long id = dbHelper.insertWeight(weight);
+                if (id != -1) {
+                    Toast.makeText(this, "Weight logged: " + weight + " kg", Toast.LENGTH_SHORT).show();
+                    weightInput.setText("");
+                    updateUI();
+                }
+            } catch (NumberFormatException e) {
+                Toast.makeText(this, "Enter a valid number", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        clearBtn.setOnClickListener(v -> weightInput.setText(""));
+        backBtn.setOnClickListener(v -> finish());
+    }
+
+    private void updateUI() {
+        List<WeightEntry> entries = dbHelper.getWeightHistory();
+        adapter.updateData(entries);
+
+        double latest = dbHelper.getLatestWeight();
+        double change = dbHelper.getWeightChange();
+
+        if (latest > 0) {
+            latestWeightText.setText("Current: " + latest + " kg");
+        } else {
+            latestWeightText.setText("No weight logged yet");
+        }
+
+        if (change != 0) {
+            String direction = change > 0 ? "↑" : "↓";
+            changeText.setText("Change: " + direction + " " + Math.abs(change) + " kg");
+            changeText.setTextColor(getColor(change > 0 ? android.R.color.holo_red_light : android.R.color.holo_green_light));
+        } else if (latest > 0) {
+            changeText.setText("No previous weight to compare");
+        } else {
+            changeText.setText("Log your weight to see changes");
+        }
+
+        summaryText.setText(entries.size() + " weight entries logged");
+    }
+
+    private void onDeleteEntry(int id) {
+        new AlertDialog.Builder(this)
+                .setTitle("Delete Entry")
+                .setMessage("Delete this weight entry?")
+                .setPositiveButton("Delete", (dialog, which) -> {
+                    dbHelper.deleteWeightEntry(id);
+                    updateUI();
+                    Toast.makeText(this, "Deleted", Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateUI();
+    }
+}

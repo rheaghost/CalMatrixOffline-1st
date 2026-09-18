@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#0b0b0e"
+    android:padding="16dp"
+    android:gravity="center">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🗣️ Voice Logging"
+        android:textSize="28sp"
+        android:textStyle="bold"
+        android:textColor="#f5b041"
+        android:gravity="center"
+        android:layout_marginTop="8dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Say what you ate"
+        android:textColor="#888"
+        android:gravity="center"
+        android:layout_marginBottom="32dp" />
+
+    <TextView
+        android:id="@+id/resultText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Press the mic to speak"
+        android:textColor="#ccc"
+        android:textSize="16sp"
+        android:gravity="center"
+        android:padding="24dp"
+        android:background="#1a1a1f"
+        android:layout_marginBottom="32dp"
+        android:minHeight="150dp" />
+
+    <Button
+        android:id="@+id/voiceBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="🎤 Speak"
+        android:background="@drawable/rounded_button1"
+        android:textColor="#0b0b0e"
+        android:padding="16dp"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/backBtn"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="← Back"
+        android:background="@drawable/rounded_button1"
+        android:textColor="#fff"
+        android:padding="14dp"
+        android:layout_marginTop="12dp" />
+
+</LinearLayout>

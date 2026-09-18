@@ -1,0 +1,416 @@
+package com.calsnap1;
+# 26081512
+# as it may conflict with correction logic
+
+import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.util.Log;
+
+import org.tensorflow.lite.DataType;
+import org.tensorflow.lite.Interpreter;
+import java.io.InputStream;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
+import java.util.HashMap;
+import java.util.Map;
+
+public class FoodClassifier {
+
+    private static final String TAG = "FoodClassifier";
+    private Interpreter interpreter;
+    private static final int INPUT_SIZE = 224;
+    private static final int PIXEL_SIZE = 3;
+
+    private boolean isQuantized = false;
+
+
+    // ============================================================
+    // FOOD-101 CLASSES (exact order as trained)
+    // ============================================================
+    private static final String[] FOOD_CLASSES = {
+            "apple_pie", "baby_back_ribs", "baklava", "beef_carpaccio", "beef_tartare",
+            "beet_salad", "beignets", "biscotti", "boiled_egg", "bruschetta",
+            "caesar_salad", "cannoli", "caprese_salad", "carrot_cake", "ceviche",
+            "cheeseburger", "cheese_plate", "chicken_curry", "chicken_quesadilla",
+            "chicken_wings", "chocolate_cake", "chocolate_mousse", "churros",
+            "clam_chowder", "club_sandwich", "crab_cakes", "creme_brulee",
+            "croque_madame", "cup_cakes", "deviled_eggs", "donuts",
+            "dumplings", "edamame", "eggs_benedict", "escargots",
+            "falafel", "filet_mignon", "fish_and_chips", "foie_gras",
+            "french_fries", "french_onion_soup", "french_toast", "fried_calamari",
+            "fried_rice", "frozen_yogurt", "garlic_bread", "gnocchi",
+            "greek_salad", "grilled_cheese_sandwich", "grilled_salmon", "guacamole",
+            "gyoza", "hamburger", "hot_and_sour_soup", "hot_dog",
+            "huevos_rancheros", "hummus", "ice_cream", "lasagna",
+            "lobster_bisque", "lobster_roll", "macaroni_and_cheese", "macarons",
+            "miso_soup", "mussels", "nachos", "omelette",
+            "onion_rings", "oysters", "pad_thai", "paella",
+            "pancakes", "panna_cotta", "peking_duck", "pho",
+            "pizza", "pork_chop", "poutine", "prime_rib",
+            "pulled_pork_sandwich", "ramen", "ravioli", "red_velvet_cake",
+            "risotto", "samosa", "sashimi", "scallops",
+            "seaweed_salad", "shrimp_and_grits", "spaghetti_bolognese",
+            "spaghetti_carbonara", "spring_rolls", "steak", "strawberry_shortcake",
+            "sushi", "tacos", "takoyaki", "tiramisu",
+            "tuna_tartare", "waffles"
+    };
+
+    // ============================================================
+    // MAPPING TO YOUR DATABASE NAMES (expand as needed)
+    // ============================================================
+    private static final Map<String, String> NAME_MAP = new HashMap<>();
+    static {
+        NAME_MAP.put("cheeseburger", "cheeseburger");
+        NAME_MAP.put("hamburger", "cheeseburger");
+        NAME_MAP.put("pizza", "pizza");
+        NAME_MAP.put("ramen", "ramen");
+        NAME_MAP.put("sushi", "sushi");
+        NAME_MAP.put("fried_rice", "fried rice");
+        NAME_MAP.put("french_fries", "fries");
+        NAME_MAP.put("chicken_wings", "chicken wings");
+        NAME_MAP.put("grilled_salmon", "salmon");
+        NAME_MAP.put("steak", "steak");
+        NAME_MAP.put("omelette", "egg");
+        NAME_MAP.put("boiled_egg", "egg");
+        NAME_MAP.put("apple_pie", "apple");
+        NAME_MAP.put("ice_cream", "ice cream");
+        NAME_MAP.put("donuts", "donut");
+        NAME_MAP.put("pancakes", "pancake");
+        NAME_MAP.put("waffles", "waffle");
+        NAME_MAP.put("hot_dog", "hot dog");
+        NAME_MAP.put("tacos", "taco");
+        NAME_MAP.put("nachos", "nacho");
+        NAME_MAP.put("hummus", "hummus");
+        NAME_MAP.put("guacamole", "guacamole");
+        NAME_MAP.put("falafel", "falafel");
+        NAME_MAP.put("samosa", "samosa");
+        NAME_MAP.put("spring_rolls", "spring roll");
+        NAME_MAP.put("dumplings", "dumpling");
+        NAME_MAP.put("gyoza", "gyoza");
+        NAME_MAP.put("edamame", "edamame");
+        NAME_MAP.put("miso_soup", "miso soup");
+        NAME_MAP.put("pho", "pho");
+        NAME_MAP.put("pad_thai", "pad thai");
+        NAME_MAP.put("paella", "paella");
+        NAME_MAP.put("risotto", "risotto");
+        NAME_MAP.put("lasagna", "lasagna");
+        NAME_MAP.put("ravioli", "ravioli");
+        NAME_MAP.put("spaghetti_bolognese", "spaghetti");
+        NAME_MAP.put("spaghetti_carbonara", "spaghetti");
+        NAME_MAP.put("macaroni_and_cheese", "macaroni");
+        NAME_MAP.put("garlic_bread", "garlic bread");
+        NAME_MAP.put("bruschetta", "bruschetta");
+        NAME_MAP.put("caesar_salad", "salad");
+        NAME_MAP.put("greek_salad", "salad");
+        NAME_MAP.put("caprese_salad", "salad");
+        NAME_MAP.put("beet_salad", "salad");
+        NAME_MAP.put("seaweed_salad", "salad");
+        NAME_MAP.put("clam_chowder", "clam chowder");
+        NAME_MAP.put("lobster_bisque", "lobster");
+        NAME_MAP.put("lobster_roll", "lobster");
+        NAME_MAP.put("crab_cakes", "crab");
+        NAME_MAP.put("shrimp_and_grits", "shrimp");
+        NAME_MAP.put("fish_and_chips", "fish");
+        NAME_MAP.put("grilled_cheese_sandwich", "grilled cheese");
+        NAME_MAP.put("club_sandwich", "sandwich");
+        NAME_MAP.put("pulled_pork_sandwich", "sandwich");
+        NAME_MAP.put("chicken_curry", "chicken curry");
+        NAME_MAP.put("chicken_quesadilla", "chicken");
+        NAME_MAP.put("pork_chop", "pork");
+        NAME_MAP.put("prime_rib", "beef");
+        NAME_MAP.put("filet_mignon", "beef");
+        NAME_MAP.put("baby_back_ribs", "ribs");
+        NAME_MAP.put("beef_carpaccio", "beef");
+        NAME_MAP.put("beef_tartare", "beef");
+        NAME_MAP.put("tuna_tartare", "tuna");
+        NAME_MAP.put("ceviche", "ceviche");
+        NAME_MAP.put("mussels", "mussels");
+        NAME_MAP.put("scallops", "scallops");
+        NAME_MAP.put("oysters", "oysters");
+        NAME_MAP.put("foie_gras", "foie gras");
+        NAME_MAP.put("escargots", "escargot");
+        NAME_MAP.put("deviled_eggs", "egg");
+        NAME_MAP.put("eggs_benedict", "egg");
+        NAME_MAP.put("huevos_rancheros", "egg");
+        NAME_MAP.put("croque_madame", "croque madame");
+        NAME_MAP.put("french_toast", "french toast");
+    }
+
+    // ============================================================
+    // CONSTRUCTOR
+    // ============================================================
+    public FoodClassifier(Context context) {
+        try {
+            Log.d(TAG, "Loading model from assets...");
+
+
+            // Check if file exists in assets
+            String[] files = context.getAssets().list("");
+            boolean found = false;
+            for (String f : files) {
+                if (f.equals("food_model.tflite")) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                Log.e(TAG, "food_model.tflite not found in assets!");
+                Log.d(TAG, "Available files: " + java.util.Arrays.toString(files));
+                return;
+            }
+
+
+            // Load the model from assets
+            InputStream modelStream = context.getAssets().open("food_model.tflite");
+            byte[] modelBytes = new byte[modelStream.available()];
+            modelStream.read(modelBytes);
+            modelStream.close();
+
+            ByteBuffer modelBuffer = ByteBuffer.allocateDirect(modelBytes.length);
+            modelBuffer.put(modelBytes);
+            modelBuffer.rewind();
+
+            interpreter = new Interpreter(modelBuffer);
+            Log.d(TAG, "Interpreter created successfully");
+
+            // Check input tensor type
+            //int inputType = interpreter.getInputTensor(0).dataType();
+            DataType inputType = interpreter.getInputTensor(0).dataType();
+            //isQuantized = (inputType == 1); // 1 = UINT8
+            isQuantized = (inputType == DataType.UINT8);
+            Log.d(TAG, "Model loaded. Input type: " + (isQuantized ? "UINT8" : "FLOAT32"));
+            Log.d(TAG, "Input shape: " + java.util.Arrays.toString(interpreter.getInputTensor(0).shape()));
+        } catch (Exception e) {
+           // e.printStackTrace();
+            Log.e(TAG, "Failed to load model: " + e.getMessage());
+            interpreter = null;
+        }
+    }
+
+    // ============================================================
+    // CLASSIFY METHOD
+    // ============================================================
+    public String classifyFood(Bitmap bitmap) {
+        if (interpreter == null) {
+            Log.e(TAG, "Interpreter is null");
+            return "food";
+        }
+
+        // Get input and output tensor details
+        int[] inputShape = interpreter.getInputTensor(0).shape();
+        DataType inputType = interpreter.getInputTensor(0).dataType();
+        Log.d(TAG, "Input shape: " + java.util.Arrays.toString(inputShape));
+        Log.d(TAG, "Input type: " + inputType.toString());
+
+        // Resize image to match model input
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, inputShape[1], inputShape[2], true);
+
+        // Prepare input buffer based on data type
+        ByteBuffer inputBuffer;
+        if (inputType == DataType.UINT8) {
+            // UINT8: 0-255
+            inputBuffer = ByteBuffer.allocateDirect(inputShape[1] * inputShape[2] * 3);
+            inputBuffer.order(ByteOrder.nativeOrder());
+            int[] pixels = new int[inputShape[1] * inputShape[2]];
+            resized.getPixels(pixels, 0, inputShape[1], 0, 0, inputShape[1], inputShape[2]);
+            for (int pixel : pixels) {
+                byte r = (byte) ((pixel >> 16) & 0xFF);
+                byte g = (byte) ((pixel >> 8) & 0xFF);
+                byte b = (byte) (pixel & 0xFF);
+                inputBuffer.put(r);
+                inputBuffer.put(g);
+                inputBuffer.put(b);
+            }
+        } else {
+            // FLOAT32: 0.0-1.0
+            inputBuffer = ByteBuffer.allocateDirect(inputShape[1] * inputShape[2] * 3 * 4);
+            inputBuffer.order(ByteOrder.nativeOrder());
+            int[] pixels = new int[inputShape[1] * inputShape[2]];
+            resized.getPixels(pixels, 0, inputShape[1], 0, 0, inputShape[1], inputShape[2]);
+            for (int pixel : pixels) {
+                float r = ((pixel >> 16) & 0xFF) / 255.0f;
+                float g = ((pixel >> 8) & 0xFF) / 255.0f;
+                float b = (pixel & 0xFF) / 255.0f;
+                inputBuffer.putFloat(r);
+                inputBuffer.putFloat(g);
+                inputBuffer.putFloat(b);
+            }
+        }
+
+        inputBuffer.rewind();
+
+        // Prepare output buffer
+        int outputSize = interpreter.getOutputTensor(0).shape()[1];
+        float[][] output = new float[1][outputSize];
+        Log.d(TAG, "Output size: " + outputSize);
+
+        // Run inference
+        try {
+            interpreter.run(inputBuffer, output);
+            Log.d(TAG, "Inference completed");
+        } catch (Exception e) {
+            Log.e(TAG, "Inference failed: " + e.getMessage());
+            return "food";
+        }
+
+        // Find best match
+        int bestIndex = 0;
+        float bestScore = 0;
+        for (int i = 0; i < outputSize; i++) {
+            if (output[0][i] > bestScore) {
+                bestScore = output[0][i];
+                bestIndex = i;
+            }
+        }
+
+        Log.d(TAG, "Best index: " + bestIndex + ", score: " + bestScore);
+        //2608251213
+        String modelOutput = FOOD_CLASSES[bestIndex];
+        //2608251213
+
+        //try here,change if it doesn't work it can conflict with the below
+        // Check if user has a correction for this output
+        String correction = dbHelper.getCorrection(modelOutput);
+        if (correction != null) {
+            return correction;  // Use user's correction
+        }
+
+        // Otherwise, use mapping
+        if (NAME_MAP.containsKey(modelOutput)) {
+            return NAME_MAP.get(modelOutput);
+        }
+        return modelOutput.replace("_", " ");
+
+        //
+
+
+        // Return food name if confidence > threshold
+        if (bestScore > 0.2 && bestIndex < FOOD_CLASSES.length) {
+            //String modelOutput = FOOD_CLASSES[bestIndex];
+            modelOutput = FOOD_CLASSES[bestIndex];
+            Log.d(TAG, "Recognized: " + modelOutput);
+            if (NAME_MAP.containsKey(modelOutput)) {
+                return NAME_MAP.get(modelOutput);
+            }
+            return modelOutput.replace("_", " ");
+        }
+
+        return "food";
+    }
+
+
+    public String classifyFood_old2(Bitmap bitmap) {
+        if (interpreter == null) {
+            Log.e(TAG, "Interpreter is null");
+            return "food";
+        }
+
+        // Preprocess image
+        Bitmap resized = Bitmap.createScaledBitmap(bitmap, INPUT_SIZE, INPUT_SIZE, true);
+        //ByteBuffer inputBuffer = convertBitmapToByteBuffer(resized);
+        Object inputBuffer;
+
+        //added
+
+        if (isQuantized) {
+            // UINT8 input: normalize to 0-255
+            ByteBuffer byteBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3);
+            byteBuffer.order(ByteOrder.nativeOrder());
+
+            int[] pixels = new int[INPUT_SIZE * INPUT_SIZE];
+            resized.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+            for (int pixel : pixels) {
+                byte r = (byte) ((pixel >> 16) & 0xFF);
+                byte g = (byte) ((pixel >> 8) & 0xFF);
+                byte b = (byte) (pixel & 0xFF);
+                byteBuffer.put(r);
+                byteBuffer.put(g);
+                byteBuffer.put(b);
+            }
+            inputBuffer = byteBuffer;
+        } else {
+            // FLOAT32 input: normalize to 0.0-1.0
+            ByteBuffer floatBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * 3 * 4);
+            floatBuffer.order(ByteOrder.nativeOrder());
+
+            int[] pixels = new int[INPUT_SIZE * INPUT_SIZE];
+            resized.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+            for (int pixel : pixels) {
+                float r = ((pixel >> 16) & 0xFF) / 255.0f;
+                float g = ((pixel >> 8) & 0xFF) / 255.0f;
+                float b = (pixel & 0xFF) / 255.0f;
+                floatBuffer.putFloat(r);
+                floatBuffer.putFloat(g);
+                floatBuffer.putFloat(b);
+            }
+            inputBuffer = floatBuffer;
+        }
+
+
+        //end added
+
+        // Run inference
+        float[][] output = new float[1][FOOD_CLASSES.length];
+        //interpreter.run(inputBuffer, output);
+
+        // Run inference
+        //float[][] output = new float[1][FOOD_CLASSES.length];
+        try {
+            interpreter.run(inputBuffer, output);
+        } catch (Exception e) {
+            Log.e(TAG, "Inference failed: " + e.getMessage());
+            return "food";
+        }
+
+
+
+        // Find best match
+        int bestIndex = 0;
+        float bestScore = 0;
+        for (int i = 0; i < FOOD_CLASSES.length; i++) {
+            if (output[0][i] > bestScore) {
+                bestScore = output[0][i];
+                bestIndex = i;
+            }
+        }
+
+        Log.d(TAG, "Best index: " + bestIndex + ", score: " + bestScore);
+
+        // Only return if confidence > 0.3
+        if (bestScore > 0.3) {
+            String modelOutput = FOOD_CLASSES[bestIndex];
+            Log.d(TAG, "Recognized: " + modelOutput);
+            // Map to database name
+            if (NAME_MAP.containsKey(modelOutput)) {
+                return NAME_MAP.get(modelOutput);
+            }
+            return modelOutput.replace("_", " ");
+        }
+        Log.d(TAG, "Low confidence: " + bestScore);
+        return "food";
+    }
+
+    // ============================================================
+    // HELPER: Convert Bitmap to ByteBuffer
+    // ============================================================
+    private ByteBuffer convertBitmapToByteBuffer(Bitmap bitmap) {
+        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(INPUT_SIZE * INPUT_SIZE * PIXEL_SIZE * 4);
+        byteBuffer.order(ByteOrder.nativeOrder());
+
+        int[] pixels = new int[INPUT_SIZE * INPUT_SIZE];
+        bitmap.getPixels(pixels, 0, INPUT_SIZE, 0, 0, INPUT_SIZE, INPUT_SIZE);
+
+        for (int pixel : pixels) {
+            float r = ((pixel >> 16) & 0xFF) / 255.0f;
+            float g = ((pixel >> 8) & 0xFF) / 255.0f;
+            float b = (pixel & 0xFF) / 255.0f;
+            byteBuffer.putFloat(r);
+            byteBuffer.putFloat(g);
+            byteBuffer.putFloat(b);
+        }
+        return byteBuffer;
+    }
+}

@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0b0b0e"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💧 Water Tracker"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            android:textColor="#f5b041"
+            android:gravity="center"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stay hydrated!"
+            android:textColor="#888"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:id="@+id/waterCountText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="💧 0 ml"
+            android:textSize="48sp"
+            android:textColor="#4FC3F7"
+            android:gravity="center"
+            android:padding="16dp" />
+
+        <TextView
+            android:id="@+id/waterGoalText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="🎯 0 / 2000 ml"
+            android:textColor="#666"
+            android:textSize="16sp"
+            android:layout_marginBottom="16dp" />
+
+        <Button
+            android:id="@+id/addWaterBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="💧 Add 1 Glass (250ml)"
+            android:background="@drawable/rounded_button1"
+
+
+            android:textColor="#fff"
+            android:padding="14dp"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/resetWaterBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="🔄 Reset Today"
+            android:background="@drawable/rounded_button1"
+            android:textColor="#e74c3c"
+            android:padding="14dp"
+            android:layout_marginTop="8dp" />
+
+        <TextView
+            android:id="@+id/graphSummary"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="📊 14-Day Avg: -- ml/day"
+            android:textColor="#7ddf7d"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginTop="16dp" />
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="200dp"
+            android:layout_marginTop="8dp"
+            android:scrollbars="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <com.calmatrixoffline.SimpleChartView
+                    android:id="@+id/chartView"
+                    android:layout_width="500dp"
+                    android:layout_height="match_parent" />
+
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <Button
+            android:id="@+id/backBtn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="← Back"
+            android:background="@drawable/rounded_button1"
+            android:textColor="#fff"
+            android:padding="14dp"
+            android:layout_marginTop="16dp" />
+
+    </LinearLayout>
+</ScrollView>

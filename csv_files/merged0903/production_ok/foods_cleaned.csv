@@ -1,0 +1,869 @@
+name,calories,protein,carbs,fat,serving
+"1000 island,salad drsng,local",25,0.0,2,2.0,1 Tbsp
+"1000 island,salad drsng,reglr",60,0.0,2,6.0,1 Tbsp
+"40% bran flakes,kellogg's",90,4.0,22,1.0,1 oz
+"40% bran flakes,post",90,3.0,22,0.0,1 oz
+"alfalfa seeds,sprouted,raw",10,1.0,1,0.0,1 Cup
+all-bran cereal,70,4.0,21,1.0,1 oz
+"almonds,slivered",795,27.0,28,70.0,1 Cup
+"almonds,whole",165,6.0,6,15.0,1 oz
+"angelfood cake,from mix",1510,38.0,342,2.0,1 Cake
+apple,95,0.5,25,0.3,1 medium
+"apple juice,canned",115,0.0,29,0.0,1 Cup
+apple pie,2420,21.0,360,105.0,1 Pie
+"apples,dried,sulfured",155,1.0,42,0.0,10 Rings
+"apples,raw,peeled,sliced",65,0.0,16,0.0,1 Cup
+"apples,raw,unpeeled,2 per lb",125,0.0,32,1.0,1 Apple
+"apples,raw,unpeeled,3 per lb",80,0.0,21,0.0,1 Apple
+"applesauce,canned,sweetened",195,0.0,51,0.0,1 Cup
+"applesauce,canned,unsweetened",105,0.0,28,0.0,1 Cup
+"apricot nectar,no added vit c",140,1.0,36,0.0,1 Cup
+"apricot,canned,heavy syrup",215,1.0,55,0.0,1 Cup
+"apricots,canned,juice pack",120,2.0,31,0.0,1 Cup
+"apricots,dried,cooked,unswtn",210,3.0,55,0.0,1 Cup
+"apricots,dried,uncooked",310,5.0,80,1.0,1 Cup
+"apricots,raw",50,1.0,12,0.0,3 Aprcot
+"artichokes,globe,cooked,drn",55,3.0,12,0.0,1 Artchk
+"asparagus,canned,spears,nosalt",10,1.0,2,0.0,4 Spears
+"asparagus,canned,spears,w/salt",10,1.0,2,0.0,4 Spears
+"asparagus,ckd frm frz,dr,sper",15,2.0,3,0.0,4 Spears
+"asparagus,ckd frm frz,drn,cut",50,5.0,9,1.0,1 Cup
+"asparagus,ckd frm raw,dr,cut",45,5.0,8,1.0,1 Cup
+"asparagus,ckd frm raw,dr,sper",15,2.0,3,0.0,4 Spears
+"avocados,california",305,4.0,12,30.0,1 Avocdo
+"avocados,florida",340,5.0,27,27.0,1 Avocdo
+"bagels,egg",200,7.0,38,2.0,1 Bagel
+"bagels,plain",200,7.0,38,2.0,1 Bagel
+baked potatoes,161,4.3,37,0.2,1 snadwich
+"baking powder,low sodium",5,0.0,1,0.0,1 Tsp
+"baking powder,sas,ca po4",5,0.0,1,0.0,1 Tsp
+"baking powder,sas,capo4+caso4",5,0.0,1,0.0,1 Tsp
+"baking powder,strght phosphat",5,0.0,1,0.0,1 Tsp
+"baking pwdr biscuits,from mix",95,2.0,14,3.0,1 Biscut
+"baking pwdr biscuits,homerecpe",100,2.0,13,5.0,1 Biscut
+"baking pwdr biscuits,refrgdogh",65,1.0,10,2.0,1 Biscut
+"bamboo shoots,canned,drained",25,2.0,4,1.0,1 Cup
+banana,105,1.3,27,0.4,1 medium
+bananas,105,1.0,27,1.0,1 Banana
+"bananas,sliced",140,2.0,35,1.0,1 Cup
+barbecue sauce,10,0.0,2,0.0,1 Tbsp
+"barley,pearled,light,uncookd",700,16.0,158,2.0,1 Cup
+"bean sprouts,mung,cookd,dran",25,3.0,5,0.0,1 Cup
+"bean sprouts,mung,raw",30,3.0,6,0.0,1 Cup
+"bean with bacon soup,canned",170,8.0,23,6.0,1 Cup
+"beans,dry,canned,w/frankfurter",365,19.0,32,18.0,1 Cup
+"beans,dry,canned,w/pork+swtsce",385,16.0,54,12.0,1 Cup
+"beans,dry,canned,w/pork+tomsce",310,16.0,48,7.0,1 Cup
+"beef and vegetable stew,hm rcp",220,16.0,15,11.0,1 Cup
+"beef broth,boulln,consm,cnnd",15,3.0,0,1.0,1 Cup
+"beef gravy,canned",125,9.0,11,5.0,1 Cup
+"beef heart,braised",150,24.0,0,5.0,3 oz
+"beef liver,fried",185,23.0,7,7.0,3 oz
+"beef noodle soup,canned",85,5.0,9,3.0,1 Cup
+"beef potpie,home recipe",515,21.0,39,30.0,1 Piece
+"beef roast,eye o rnd,lean",135,22.0,0,5.0,2.6 oz
+"beef roast,eye o rnd,lean+fat",205,23.0,0,12.0,3 oz
+"beef roast,rib,lean + fat",315,19.0,0,26.0,3 oz
+"beef roast,rib,lean only",150,17.0,0,9.0,2.2 oz
+"beef steak,sirloin,broil,lean",150,22.0,0,6.0,2.5 oz
+"beef steak,sirloin,broil,ln+ft",240,23.0,0,15.0,3 oz
+"beef,canned,corned",185,22.0,0,10.0,3 oz
+"beef,ckd,bttm round,lean only",175,25.0,0,8.0,2.8 oz
+"beef,ckd,bttm round,lean+ fat",220,25.0,0,13.0,3 oz
+"beef,ckd,chuck blade,lean+fat",325,22.0,0,26.0,3 oz
+"beef,ckd,chuck blade,leanonly",170,19.0,0,9.0,2.2 oz
+"beef,dried,chipped",145,24.0,0,4.0,2.5 oz
+"beer,light",95,1.0,5,0.0,12 fl oz
+"beer,regular",150,1.0,13,0.0,12 fl oz
+"beet greens,cooked,drained",40,4.0,8,0.0,1 Cup
+"beets,canned,drained,no salt",55,2.0,12,0.0,1 Cup
+"beets,canned,drained,w/ salt",55,2.0,12,0.0,1 Cup
+"beets,cooked,drained,diced",55,2.0,11,0.0,1 Cup
+"beets,cooked,drained,whole",30,1.0,7,0.0,2 Beets
+"black beans,dry,cooked,drand",225,15.0,41,1.0,1 Cup
+"black-eyed peas,dry,cooked",190,13.0,35,1.0,1 Cup
+"blackberries,raw",75,1.0,18,1.0,1 Cup
+"blackeye peas,immatr,raw,cked",180,13.0,30,1.0,1 Cup
+"blackeye peas,immtr,frzn,cked",225,14.0,40,1.0,1 Cup
+blue cheese,100,6.0,1,8.0,1 oz
+blue cheese salad dressing,75,1.0,1,8.0,1 Tbsp
+"blueberries,frozen,sweetened",230,1.0,62,0.0,10 oz
+"blueberries,raw",80,1.0,20,1.0,1 Cup
+"blueberry muffins,from com mix",140,3.0,22,5.0,1 Muffin
+"blueberry muffins,home recipe",135,3.0,20,5.0,1 Muffin
+blueberry pie,2285,23.0,330,102.0,1 Pie
+bologna,180,7.0,2,16.0,2 Slices
+"boston brown bread,w/whtecrnm",95,2.0,21,1.0,1 Slice
+"boston brown bread,w/yllwcrnml",95,2.0,21,1.0,1 Slice
+"bouillon,dehydrtd,unprepared",15,1.0,1,1.0,1 Pkt
+"bran muffins,from commerl mix",140,3.0,24,4.0,1 Muffin
+"bran muffins,home recipe",125,3.0,19,6.0,1 Muffin
+braunschweiger,205,8.0,2,18.0,2 Slices
+brazil nuts,185,4.0,4,19.0,1 oz
+bread,79,2.5,15,1.0,1 slice
+"bread stuffing,from mx,drytype",500,9.0,50,31.0,1 Cup
+"bread stuffing,from mx,moist",420,9.0,40,26.0,1 Cup
+"breadcrumbs,dry,grated",390,13.0,73,5.0,1 Cup
+"broccoli,frzn,cooked,draned",10,1.0,2,0.0,1 Piece
+"broccoli,raw",40,4.0,8,1.0,1 Spear
+"broccoli,raw,cooked,drained",50,5.0,10,1.0,1 Spear
+"brown and serve sausage,brwnd",50,2.0,0,5.0,1 Link
+brown gravy from dry mix,80,3.0,14,2.0,1 Cup
+"brownies w/ nuts,frm home recp",95,1.0,11,6.0,1 Browne
+"brownies w/ nuts,frstng,cmmrcl",100,1.0,16,4.0,1 Browne
+"brussels sprouts,frzn,cooked",65,6.0,13,1.0,1 Cup
+"brussels sprouts,raw,cooked",60,4.0,13,1.0,1 Cup
+"buckwheat flour,light,sifted",340,6.0,78,1.0,1 Cup
+"bulgur,uncooked",600,19.0,129,3.0,1 Cup
+burger,303,15.0,30,13.0,1 burger
+"butter,salted",810,1.0,0,92.0,1/2 Cup
+"butter,unsalted",810,1.0,0,92.0,1/2 Cup
+"buttermilk,dried",465,41.0,59,7.0,1 Cup
+"buttermilk,fluid",100,8.0,12,2.0,1 Cup
+"cabbage,chinese,pak-choi,ckd",20,3.0,3,0.0,1 Cup
+"cabbage,chinese,pe-tsai,raw",10,1.0,2,0.0,1 Cup
+"cabbage,common,cooked,drned",30,1.0,7,0.0,1 Cup
+"cabbage,common,raw",15,1.0,4,0.0,1 Cup
+"cabbage,red,raw",20,1.0,4,0.0,1 Cup
+"cabbage,savoy,raw",20,1.0,4,0.0,1 Cup
+"cake or pastry flour,sifted",350,7.0,76,1.0,1 Cup
+camembert cheese,115,8.0,0,9.0,1 Wedge
+"cantaloup,raw",95,2.0,22,1.0,1/2 Meln
+cap'n crunch cereal,120,1.0,23,3.0,1 oz
+"caramels,plain or chocolate",115,1.0,22,3.0,1 oz
+carob flour,255,6.0,126,0.0,1 Cup
+"carrot cake,cremchese frst,rec",6175,63.0,775,328.0,1 Cake
+"carrots,canned,drn,w/ salt",35,1.0,8,0.0,1 Cup
+"carrots,canned,drnd,w/o salt",35,1.0,8,0.0,1 Cup
+"carrots,cooked from frozen",55,2.0,12,0.0,1 Cup
+"carrots,cooked from raw",70,2.0,16,0.0,1 Cup
+"carrots,raw,grated",45,1.0,11,0.0,1 Cup
+"carrots,raw,whole",30,1.0,7,0.0,1 Carrot
+"cashew nuts,dry roastd,salted",165,4.0,9,13.0,1 oz
+"cashew nuts,dry roastd,unsalt",785,21.0,45,63.0,1 Cup
+"cashew nuts,dry roasted,saltd",785,21.0,45,63.0,1 Cup
+"cashew nuts,oil roastd,salted",750,21.0,37,63.0,1 Cup
+"cashew nuts,oil roastd,unsalt",750,21.0,37,63.0,1 Cup
+catsup,290,5.0,69,1.0,1 Cup
+"cauliflower,cooked from frozn",35,3.0,7,0.0,1 Cup
+"cauliflower,cooked from raw",30,2.0,6,0.0,1 Cup
+"cauliflower,raw",25,2.0,5,0.0,1 Cup
+celery seed,10,0.0,1,1.0,1 Tsp
+"celery,pascal type,raw,piece",20,1.0,4,0.0,1 Cup
+"celery,pascal type,raw,stalk",5,0.0,1,0.0,1 Stalk
+cheddar cheese,115,7.0,0,9.0,1 oz
+"chedddar cheese,shredded",455,28.0,1,37.0,1 Cup
+cheerios cereal,110,4.0,20,2.0,1 oz
+"cheese crackers,plain",50,1.0,6,3.0,10 Crack
+"cheese crackers,sandwch,peant",40,1.0,5,2.0,1 Sandwh
+"cheese sauce w/ milk,frm mix",305,16.0,23,17.0,1 Cup
+cheeseburger,303,15.0,30,13.0,1 sandwich
+"cheeseburger,4oz patty",525,30.0,40,31.0,1 Sandwh
+"cheeseburger,regular",300,15.0,28,15.0,1 Sandwh
+cheesecake,3350,60.0,317,213.0,1 Cake
+"cherries,sour,red,cannd,water",90,2.0,22,0.0,1 Cup
+"cherries,sweet,raw",50,1.0,11,1.0,10 Chery
+cherry pie,2465,25.0,363,107.0,1 Pie
+"chestnuts,european,roasted",350,5.0,76,3.0,1 Cup
+"chicken a la king,home recipe",470,27.0,12,34.0,1 Cup
+"chicken and noodles,home recp",365,22.0,26,18.0,1 Cup
+chicken breast,165,31.0,0,3.6,1 breast
+"chicken chow mein,canned",95,7.0,18,0.0,1 Cup
+"chicken chow mein,home recipe",255,31.0,10,10.0,1 Cup
+chicken frankfurter,115,6.0,3,9.0,1 Frank
+chicken gravy from dry mix,85,3.0,14,2.0,1 Cup
+"chicken gravy,canned",190,5.0,13,14.0,1 Cup
+"chicken liver,cooked",30,5.0,0,1.0,1 Liver
+"chicken noodle soup,canned",75,4.0,9,2.0,1 Cup
+"chicken noodle soup,dehyd,prpd",40,2.0,6,1.0,1 Pkt
+"chicken potpie,home recipe",545,23.0,42,31.0,1 Piece
+"chicken rice soup,canned",60,4.0,7,2.0,1 Cup
+"chicken roll,light",90,11.0,1,4.0,2 Slices
+"chicken,canned,boneless",235,31.0,0,11.0,5 oz
+"chicken,fried,batter,breast",365,35.0,13,18.0,4.9 oz
+"chicken,fried,batter,drmstck",195,16.0,6,11.0,2.5 oz
+"chicken,fried,flour,breast",220,31.0,2,9.0,3.5 oz
+"chicken,fried,flour,drmstck",120,13.0,1,7.0,1.7 oz
+"chicken,roasted,breast",140,27.0,0,3.0,3.0 oz
+"chicken,roasted,drumstick",75,12.0,0,2.0,1.6 oz
+"chicken,stewed,light + dark",250,38.0,0,9.0,1 Cup
+"chickpeas,cooked,drained",270,15.0,45,4.0,1 Cup
+"chili con carne w/ beans,cnnd",340,19.0,31,16.0,1 Cup
+chili powder,10,0.0,1,0.0,1 Tsp
+"chocolate chip cookies,commrcl",180,2.0,28,9.0,4 Cookie
+"chocolate chip cookies,hme rcp",185,2.0,26,11.0,4 Cookie
+"chocolate chip cookies,refrig",225,2.0,32,11.0,4 Cookie
+"chocolate milk,lowfat 1%",160,8.0,26,3.0,1 Cup
+"chocolate milk,lowfat 2%",180,8.0,26,5.0,1 Cup
+"chocolate milk,regular",210,8.0,26,8.0,1 Cup
+"chocolate,bitter ot baking",145,3.0,8,15.0,1 oz
+"chop suey w/ beef + pork,hmrcp",300,26.0,13,17.0,1 Cup
+cinnamon,5,0.0,2,0.0,1 Tsp
+"clam chowder,manhattan,cannd",80,4.0,12,2.0,1 Cup
+"clam chowder,new eng,w/ milk",165,9.0,17,7.0,1 Cup
+"clams,canned,drained",85,13.0,2,2.0,3 oz
+"clams,raw",65,11.0,2,1.0,3 oz
+club soda,0,0.0,0,0.0,12 fl oz
+"coca pwdr w/o nofat drymlk,prd",225,9.0,30,9.0,1 Servng
+coca pwdr w/o nonfat dry milk,75,1.0,19,1.0,3/4 oz
+"cocoa pwdr w/ nofat drmlk,prpd",100,3.0,22,1.0,1 Servng
+cocoa pwdr with nonfat drymilk,100,3.0,22,1.0,1 oz
+"coconut,dried,sweetnd,shredd",470,3.0,44,33.0,1 Cup
+"coconut,raw,piece",160,1.0,7,15.0,1 Piece
+"coconut,raw,shredded",285,3.0,12,27.0,1 Cup
+"coffee,brewed",0,0.0,0,0.0,6 fl oz
+"coffee,instant,prepared",0,0.0,1,0.0,6 fl oz
+"coffeecake,crumb,from mix",1385,27.0,225,41.0,1 Cake
+"cola,diet,aspartame only",0,0.0,0,0.0,12 fl oz
+"cola,diet,asprtame + sacchrn",0,0.0,0,0.0,12 fl oz
+"cola,diet,saccharin only",0,0.0,0,0.0,12 fl oz
+"cola,regular",160,0.0,41,0.0,12 fl oz
+"collards,cooked from frozen",60,5.0,12,1.0,1 Cup
+"collards,cooked from raw",25,2.0,5,0.0,1 Cup
+"cooked salad drssing,home rcp",25,1.0,2,2.0,1 Tbsp
+corn chips,155,2.0,16,9.0,1 oz
+"corn flakes,kellogg's",110,2.0,24,0.0,1 oz
+"corn flakes,toasties",110,2.0,24,0.0,1 oz
+"corn grits,ckd,reg,whte,nosalt",145,3.0,31,0.0,1 Cup
+"corn grits,ckd,reg,whte,w/salt",145,3.0,31,0.0,1 Cup
+"corn grits,ckd,reg,yllw,nosalt",145,3.0,31,0.0,1 Cup
+"corn grits,ckd,reg,yllw,w/salt",145,3.0,31,0.0,1 Cup
+"corn grits,cooked,instant",80,2.0,18,0.0,1 Pkt
+"corn muffins,from commerl mix",145,3.0,22,6.0,1 Muffin
+"corn muffins,home recipe",145,3.0,21,5.0,1 Muffin
+corn oil,1925,0.0,0,218.0,1 Cup
+"corn,cnnd,crm stl,whit,no sal",185,4.0,46,1.0,1 Cup
+"corn,cnnd,crm stl,whit,w/salt",185,4.0,46,1.0,1 Cup
+"corn,cnnd,crm stl,yllw,no sal",185,4.0,46,1.0,1 Cup
+"corn,cnnd,crm stl,yllw,w/salt",185,4.0,46,1.0,1 Cup
+"corn,cnnd,whl krnl,whte,no sal",165,5.0,41,1.0,1 Cup
+"corn,cnnd,whl krnl,whte,w/salt",165,5.0,41,1.0,1 Cup
+"corn,cnnd,whl krnl,yllw,no sal",165,5.0,41,1.0,1 Cup
+"corn,cnnd,whl krnl,yllw,w/salt",165,5.0,41,1.0,1 Cup
+"corn,cooked frm frozn,white",60,2.0,14,0.0,1 Ear
+"corn,cooked frm frozn,yellow",60,2.0,14,0.0,1 Ear
+"corn,cooked from raw,white",85,3.0,19,1.0,1 Ear
+"corn,cooked from raw,yellow",85,3.0,19,1.0,1 Ear
+"cornmeal,bolted,dry form",440,11.0,91,4.0,1 Cup
+"cornmeal,degermed,enrched,cook",120,3.0,26,0.0,1 Cup
+"cornmeal,degermed,enriched,dry",500,11.0,108,2.0,1 Cup
+"cornmeal,whole-grnd,unbolt,dry",435,11.0,90,5.0,1 Cup
+"cottage cheese,cremd,lrge curd",235,28.0,6,10.0,1 Cup
+"cottage cheese,cremd,smll curd",215,26.0,6,9.0,1 Cup
+"cottage cheese,cremd,w/fruit",280,22.0,30,8.0,1 Cup
+"cottage cheese,lowfat 2%",205,31.0,8,4.0,1 Cup
+"cottage cheese,uncreamed",125,25.0,3,1.0,1 Cup
+"cr of chicken soup w/ h20,cnnd",115,3.0,9,7.0,1 Cup
+"cr of chicken soup w/ mlk,cnnd",190,7.0,15,11.0,1 Cup
+"cr of mushrom soup w/ h2o,cnnd",130,2.0,9,9.0,1 Cup
+"cr of mushrom soup w/ mlk,cnnd",205,6.0,15,14.0,1 Cup
+"crabmeat,canned",135,23.0,1,3.0,1 Cup
+cracked-wheat bread,1190,42.0,227,16.0,1 Loaf
+"cracked-wheat bread,toasted",65,2.0,12,1.0,1 Slice
+cranberry juice cocktal w/vitc,145,0.0,38,0.0,1 Cup
+"cranberry sauce,canned,swtnd",420,1.0,108,0.0,1 Cup
+cream cheese,100,2.0,1,10.0,1 oz
+"cream of wheat,ckd,mix n eat",100,3.0,21,0.0,1 Pkt
+creme pie,2710,20.0,351,139.0,1 Pie
+crispy chicken,320,21.0,18,19.0,1 piece
+"crm wheat,ckd,quick,no salt",140,4.0,29,0.0,1 Cup
+"crm wheat,ckd,quick,w/  salt",140,4.0,29,0.0,1 Cup
+"crm wheat,ckd,reg,inst,no salt",140,4.0,29,0.0,1 Cup
+"crm wheat,ckd,reg,inst,w/salt",140,4.0,29,0.0,1 Cup
+croissants,235,5.0,27,12.0,1 Crosst
+"cucumber,w/ peel",5,0.0,1,0.0,6 Slices
+curry powder,5,0.0,1,0.0,1 Tsp
+custard pie,1985,56.0,213,101.0,1 Pie
+"custard,baked",305,14.0,29,15.0,1 Cup
+"dandelion greens,cooked,drnd",35,2.0,7,1.0,1 Cup
+"danish pastry,fruit",235,4.0,28,13.0,1 Pastry
+"danish pastry,plain,no nuts",1305,21.0,152,71.0,1 Ring
+dates,230,2.0,61,0.0,10 Dates
+"dates,chopped",490,4.0,131,1.0,1 Cup
+"devil's food cake,chocfrst,fmx",3755,49.0,645,136.0,1 Cake
+donut,250,4.0,31,14.0,1 donut
+"doughnuts,cake type,plain",210,3.0,24,12.0,1 Donut
+"doughnuts,yeast-leavend,glzed",235,4.0,26,13.0,1 Donut
+"duck,roasted,flesh only",445,52.0,0,25.0,1/2 Duck
+egg,140,12.0,1,10.0,2 eggs
+eggnog,340,10.0,34,19.0,1 Cup
+"eggplant,cooked,steamed",25,1.0,6,0.0,1 Cup
+"eggs,cooked,fried",90,6.0,1,7.0,1 Egg
+"eggs,cooked,hard-cooked",75,6.0,1,5.0,1 Egg
+"eggs,cooked,poached",75,6.0,1,5.0,1 Egg
+"eggs,cooked,scrambled/omelet",100,7.0,1,7.0,1 Egg
+"eggs,raw,white",15,4.0,0,0.0,1 White
+"eggs,raw,whole",75,6.0,1,5.0,1 Egg
+"eggs,raw,yolk",60,3.0,0,5.0,1 Yolk
+enchilada,235,20.0,24,16.0,1 Enchld
+"endive,curly,raw",10,1.0,2,0.0,1 Cup
+"eng muffin,egg,cheese,bacon",360,18.0,31,18.0,1 Sandwh
+"english muffins,plain",140,5.0,27,1.0,1 Muffin
+"english muffins,plain,toastd",140,5.0,27,1.0,1 Muffin
+"evaporated milk,skim,canned",200,19.0,29,1.0,1 Cup
+"evaporated milk,whole,canned",340,17.0,25,19.0,1 Cup
+"fats,cooking/vegetbl shorteng",1810,0.0,0,205.0,1 Cup
+feta cheese,75,4.0,1,6.0,1 oz
+fig bars,210,2.0,42,4.0,4 Cookie
+"figs,dried",475,6.0,122,2.0,10 Figs
+"filberts,(hazelnuts) chopped",725,15.0,18,72.0,1 Cup
+"fish sandwich,lge,w/o cheese",470,18.0,41,27.0,1 Sandwh
+"fish sandwich,reg,w/ cheese",420,16.0,39,23.0,1 Sandwh
+"fish sticks,frozen,reheated",70,6.0,4,3.0,1 Stick
+"flounder or sole,baked,buttr",120,16.0,0,6.0,3 oz
+"flounder or sole,baked,margrn",120,16.0,0,6.0,3 oz
+"flounder or sole,baked,w/ofat",80,17.0,0,1.0,3 oz
+"fondant,uncoated",105,0.0,27,0.0,1 oz
+"frankfurter,cooked",145,5.0,1,13.0,1 Frank
+french bread,100,3.0,18,1.0,1 Slice
+french or vienna bread,1270,43.0,230,18.0,1 Loaf
+"french salad dressing,localor",25,0.0,2,2.0,1 Tbsp
+"french salad dressing,regular",85,0.0,1,9.0,1 Tbsp
+"french toast,home recipe",155,6.0,17,7.0,1 Slice
+"fried pie,apple",255,2.0,31,14.0,1 Pie
+"fried pie,cherry",250,2.0,32,14.0,1 Pie
+fries,365,4.0,47,17.0,1 medium
+froot loops cereal,110,2.0,25,1.0,1 oz
+"fruit cocktail,cnnd,heavysyrup",185,1.0,48,0.0,1 Cup
+"fruit cocktail,cnnd,juice pack",115,1.0,29,0.0,1 Cup
+"fruit punch drink,canned",85,0.0,22,0.0,6 fl oz
+"fruitcake,dark,from recipe",5185,74.0,783,228.0,1 Cake
+"fudge,chocolate,plain",115,1.0,21,3.0,1 oz
+garlic powder,10,0.0,2,0.0,1 Tsp
+"gelatin dessert,prepared",70,2.0,17,0.0,1/2 Cup
+"gelatin,dry",25,6.0,0,0.0,1 Envelp
+"gin,rum,vodka,whisky 80-proof",95,0.0,0,0.0,1.5 fl oz
+"gin,rum,vodka,whisky 86-proof",105,0.0,0,0.0,1.5 fl oz
+"gin,rum,vodka,whisky 90-proof",110,0.0,0,0.0,1.5 fl oz
+ginger ale,125,0.0,32,0.0,12 fl oz
+"gingerbread cake,from mix",1575,18.0,291,39.0,1 Cake
+golden grahams cereal,110,2.0,24,1.0,1 oz
+"graham cracker,plain",60,1.0,11,1.0,2 Crackr
+"grape drink,canned",100,0.0,26,0.0,6 fl oz
+"grape juice,canned",155,1.0,38,0.0,1 Cup
+grape soda,180,0.0,46,0.0,12 fl oz
+grape-nuts cereal,100,3.0,23,0.0,1 oz
+"grapefrt jce,frzn,cncn,unswten",300,4.0,72,1.0,6 fl oz
+"grapefrt jce,frzn,dltd,unswten",100,1.0,24,0.0,1 Cup
+"grapefruit juice,canned,swtnd",115,1.0,28,0.0,1 Cup
+"grapefruit juice,canned,unswt",95,1.0,22,0.0,1 Cup
+"grapefruit juice,raw",95,1.0,23,0.0,1 Cup
+"grapefruit,canned,syrup pack",150,1.0,39,0.0,1 Cup
+"grapefruit,raw,pink",40,1.0,10,0.0,1/2 Frut
+"grapefruit,raw,white",40,1.0,10,0.0,1/2 Frut
+"grapejce,frzn,concen,swtnd,w/c",385,1.0,96,1.0,6 fl oz
+"grapejce,frzn,dilutd,swtnd,w/c",125,0.0,32,0.0,1 Cup
+"grapes,european,raw,thompsn",35,0.0,9,0.0,10 Grape
+"grapes,european,raw,tokay",40,0.0,10,0.0,10 Grape
+"gravy and turkey,frozen",95,8.0,7,4.0,5 oz
+"great northn beans,dry,ckd,drn",210,14.0,38,1.0,1 Cup
+"ground beef,broiled,lean",230,21.0,0,16.0,3 oz
+"ground beef,broiled,regular",245,20.0,0,18.0,3 oz
+gum drops,100,0.0,25,0.0,1 oz
+"haddock,breaded,fried",175,17.0,7,9.0,3 oz
+"half and half,cream",315,7.0,10,28.0,1 Cup
+"halibut,broiled,butter,lemju",140,20.0,0,6.0,3 oz
+"hamburger,4oz patty",445,25.0,38,21.0,1 Sandwh
+"hamburger,regular",245,12.0,28,11.0,1 Sandwh
+hard candy,110,0.0,28,0.0,1 oz
+"herring,pickled",190,17.0,0,13.0,3 oz
+"hollandaise sce,w/ h2o,frm mx",240,5.0,14,20.0,1 Cup
+honey,1030,1.0,279,0.0,1 Cup
+honey nut cheerios cereal,105,3.0,23,1.0,1 oz
+"honeydew melon,raw",45,1.0,12,0.0,1/10 Mel
+hot dog,290,10.0,29,15.0,1 serving
+"ice cream,vanlla,regulr 11%",2155,38.0,254,115.0,1/2 Galn
+"ice cream,vanlla,rich 16% ft",2805,33.0,256,190.0,1/2 Gal
+"ice cream,vanlla,soft serve",375,7.0,38,23.0,1 Cup
+"ice milk,vanilla,4% fat",1470,41.0,232,45.0,1/2 Gal
+"ice milk,vanilla,softserv 3%",225,8.0,38,5.0,1 Cup
+"imitation creamers,liquid frz",20,0.0,2,1.0,1 Tbsp
+"imitation creamers,powdered",10,0.0,1,1.0,1 Tsp
+"imitation whipped topping,frzn",240,1.0,17,19.0,1 Cup
+imitatn sour dressing,415,8.0,11,39.0,1 Cup
+"imitatn whipd toping,pressrzd",185,1.0,11,16.0,1 Cup
+"imitatn whipd toping,pwdrd,prp",150,3.0,13,10.0,1 Cup
+italian bread,1255,41.0,256,4.0,1 Loaf
+"italian salad dressing,localor",5,0.0,2,0.0,1 Tbsp
+"italian salad dressing,regular",80,0.0,1,9.0,1 Tbsp
+jams and preserves,55,0.0,14,0.0,1 Tbsp
+jellies,50,0.0,13,0.0,1 Tbsp
+jelly beans,105,0.0,26,0.0,1 oz
+"jerusalem-artichoke,raw",115,3.0,26,0.0,1 Cup
+"kale,cooked from frozen",40,4.0,7,1.0,1 Cup
+"kale,cooked from raw",40,2.0,7,1.0,1 Cup
+"kiwifruit,raw",45,1.0,11,0.0,1 Kiwi
+"kohlrabi,cooked,drained",50,3.0,11,0.0,1 Cup
+"lamb,chops,arm,braised,lean",135,17.0,0,7.0,1.7 oz
+"lamb,chops,arm,braised,lean+ft",220,20.0,0,15.0,2.2 oz
+"lamb,chops,loin,broil,lean",140,19.0,0,6.0,2.3 oz
+"lamb,chops,loin,broil,lean+fat",235,22.0,0,16.0,2.8 oz
+"lamb,leg,roasted,lean only",140,20.0,0,6.0,2.6 oz
+"lamb,leg,roasted,lean+ fat",205,22.0,0,13.0,3 oz
+"lamb,rib,roasted,lean + fat",315,18.0,0,26.0,3 oz
+"lamb,rib,roasted,lean only",130,15.0,0,7.0,2 oz
+lard,1850,0.0,0,205.0,1 Cup
+"lemon juice,canned",50,1.0,16,1.0,1 Cup
+"lemon juice,frzn,single-strngh",55,1.0,16,1.0,6 fl oz
+"lemon juice,raw",60,1.0,21,0.0,1 Cup
+lemon meringue pie,2140,31.0,317,86.0,1 Pie
+lemon-lime soda,155,0.0,39,0.0,12 fl oz
+"lemonade,concen,frzen,diluted",80,0.0,21,0.0,6 fl oz
+"lemonade,concentrate,frz,undil",425,0.0,112,0.0,6 fl oz
+"lemons,raw",15,1.0,5,0.0,1 Lemon
+"lentils,dry,cooked",215,16.0,38,1.0,1 Cup
+"lettuce,butterhead,raw,head",20,2.0,4,0.0,1 Head
+"lettuce,butterhead,raw,leave",0,0.0,0,0.0,1 Leaf
+"lettuce,crisphead,raw,head",70,5.0,11,1.0,1 Head
+"lettuce,crisphead,raw,pieces",5,1.0,1,0.0,1 Cup
+"lettuce,crisphead,raw,wedge",20,1.0,3,0.0,1 Wedge
+"lettuce,looseleaf",10,1.0,2,0.0,1 Cup
+"light,coffee or table cream",470,6.0,9,46.0,1 Cup
+"lima beans,baby,frzn,cked,drn",190,12.0,35,1.0,1 Cup
+"lima beans,dry,cooked,draned",260,16.0,49,1.0,1 Cup
+"lima beans,thick seed,frzn,ckd",170,10.0,32,1.0,1 Cup
+"lime juice,canned",50,1.0,16,1.0,1 Cup
+"lime juice,raw",65,1.0,22,0.0,1 Cup
+"limeade,concen,frozen,diluted",75,0.0,20,0.0,6 fl oz
+"limeade,concentrate,frzn,undil",410,0.0,108,0.0,6 fl oz
+lucky charms cereal,110,3.0,23,1.0,1 oz
+"macadamia nuts,oilrstd,salted",960,10.0,17,103.0,1 Cup
+"macadamia nuts,oilrstd,unsalt",960,10.0,17,103.0,1 Cup
+"macaroni and cheese,canned",230,9.0,26,10.0,1 Cup
+"macaroni and cheese,home rcpe",430,17.0,40,22.0,1 Cup
+"macaroni,cooked,firm",190,7.0,39,1.0,1 Cup
+"macaroni,cooked,tender,cold",115,4.0,24,0.0,1 Cup
+"macaroni,cooked,tender,hot",155,5.0,32,1.0,1 Cup
+"malt-o-meal,w/o salt",120,4.0,26,0.0,1 Cup
+"malt-o-meal,with salt",120,4.0,26,0.0,1 Cup
+"malted milk,chocolate,powder",85,1.0,18,1.0,3/4 oz
+"malted milk,chocolate,pwdrppd",235,9.0,29,9.0,1 Servng
+"malted milk,natural,powder",85,3.0,15,2.0,3/4 oz
+"malted milk,natural,pwdr pprd",235,11.0,27,10.0,1 Servng
+"mangos,raw",135,1.0,35,1.0,1 Mango
+"margarine,imitation 40% fat",785,1.0,1,88.0,8 oz
+"margarine,regulr,hard,80% fat",810,1.0,1,91.0,1/2 Cup
+"margarine,regulr,soft,80% fat",1625,2.0,1,183.0,8 oz
+"margarine,spread,hard,60% fat",610,1.0,0,69.0,1/2 Cup
+"margarine,spread,soft,60% fat",1225,1.0,0,138.0,8 oz
+marshmallows,90,1.0,23,0.0,1 oz
+mayonnaise type salad dressing,60,0.0,4,5.0,1 Tbsp
+"mayonnaise,imitation",35,0.0,2,3.0,1 Tbsp
+"mayonnaise,regular",100,0.0,0,11.0,1 Tbsp
+"melba toast,plain",20,1.0,4,0.0,1 Piece
+milk,149,8.0,12,8.0,1 cup
+"milk chocolate candy,plain",145,2.0,16,9.0,1 oz
+"milk chocolate candy,w/ almond",150,3.0,15,10.0,1 oz
+"milk chocolate candy,w/ penuts",155,4.0,13,11.0,1 oz
+"milk chocolate candy,w/ rice c",140,2.0,18,7.0,1 oz
+"milk,lofat,1%,added solids",105,9.0,12,2.0,1 Cup
+"milk,lofat,1%,no addedsolid",100,8.0,12,3.0,1 Cup
+"milk,lofat,2%,added solids",125,9.0,12,5.0,1 Cup
+"milk,lofat,2%,no addedsolid",120,8.0,12,5.0,1 Cup
+"milk,skim,added milk solids",90,9.0,12,1.0,1 Cup
+"milk,skim,no added milksolid",85,8.0,12,0.0,1 Cup
+"milk,whole,3.3% fat",150,8.0,11,8.0,1 Cup
+"minestrone soup,canned",80,4.0,11,3.0,1 Cup
+miso,470,29.0,65,13.0,1 Cup
+mixed grain bread,1165,45.0,212,17.0,1 Loaf
+"mixed grain bread,toasted",65,2.0,12,1.0,1 Slice
+"mixed nuts w/ peants,dry,saltd",170,5.0,7,15.0,1 oz
+"mixed nuts w/ peants,dry,unslt",170,5.0,7,15.0,1 oz
+"mixed nuts w/ peants,oil,saltd",175,5.0,6,16.0,1 oz
+"mixed nuts w/ peants,oil,unslt",175,5.0,6,16.0,1 oz
+"molasses,cane,blackstrap",85,0.0,22,0.0,2 Tbsp
+"mozzarella cheese,whole milk",80,6.0,1,6.0,1 oz
+"mozzarella chese,skim,lomoist",80,8.0,1,5.0,1 oz
+muenster cheese,105,7.0,0,9.0,1 oz
+"mushroom gravy,canned",120,3.0,13,6.0,1 Cup
+"mushrooms,canned,drnd,w/salt",35,3.0,8,0.0,1 Cup
+"mushrooms,cooked,drained",40,3.0,8,1.0,1 Cup
+"mushrooms,raw",20,1.0,3,0.0,1 Cup
+"mustard greens,cooked,draned",20,3.0,3,0.0,1 Cup
+"mustard,prepared,yellow",5,0.0,0,0.0,1 Tsp
+nature valley granola cereal,125,3.0,19,5.0,1 oz
+"nectarines,raw",65,1.0,16,1.0,1 Nectrn
+"nonfat dry milk,instantized",325,32.0,47,1.0,1 Envlpe
+"noodles,chow mein,canned",220,6.0,26,11.0,1 Cup
+"noodles,egg,cooked",200,7.0,37,2.0,1 Cup
+oatmeal bread,1145,38.0,212,20.0,1 Loaf
+"oatmeal bread,toasted",65,2.0,12,1.0,1 Slice
+oatmeal w/ raisins cookies,245,3.0,36,10.0,4 Cookie
+"oatmeal,ckd,instnt,flvrd,fortf",160,5.0,31,2.0,1 Pkt
+"oatmeal,ckd,instnt,plain,fortf",105,4.0,18,2.0,1 Pkt
+"oatmeal,ckd,rg,qck,inst,w/osal",145,6.0,25,2.0,1 Cup
+"oatmeal,ckd,rg,qck,inst,w/salt",145,6.0,25,2.0,1 Cup
+"ocean perch,breaded,fried",185,16.0,7,11.0,1 Fillet
+"okra pods,cooked",25,2.0,6,0.0,8 Pods
+olive oil,1910,0.0,0,216.0,1 Cup
+"olives,canned,green",15,0.0,0,2.0,4 Medium
+"olives,canned,ripe,mission",15,0.0,0,2.0,3 Small
+onion powder,5,0.0,2,0.0,1 Tsp
+"onion rings,breaded,frzn,prpd",80,1.0,8,5.0,2 Rings
+"onion soup,dehydratd,prepred",20,1.0,4,0.0,1 Pkt
+"onion soup,dehydrtd,unprpred",20,1.0,4,0.0,1 Pkt
+"onions,raw,chopped",55,2.0,12,0.0,1 Cup
+"onions,raw,cooked,drained",60,2.0,13,0.0,1 Cup
+"onions,raw,sliced",40,1.0,8,0.0,1 Cup
+"onions,spring,raw",10,1.0,2,0.0,6 Onion
+"orange + grapefruit juce,cannd",105,1.0,25,0.0,1 Cup
+"orange juice,canned",105,1.0,25,0.0,1 Cup
+"orange juice,chilled",110,2.0,25,1.0,1 Cup
+"orange juice,frozen concentrte",340,5.0,81,0.0,6 fl oz
+"orange juice,frzn,cncn,diluted",110,2.0,27,0.0,1 Cup
+"orange juice,raw",110,2.0,26,0.0,1 Cup
+orange soda,180,0.0,46,0.0,12 fl oz
+"oranges,raw",60,1.0,15,0.0,1 Orange
+"oranges,raw,sections",85,2.0,21,0.0,1 Cup
+oregano,5,0.0,1,0.0,1 Tsp
+"oysters,breaded,fried",90,5.0,5,5.0,1 Oyster
+"oysters,raw",160,20.0,8,4.0,1 Cup
+"pancakes,buckwheat,from mix",55,2.0,6,2.0,1 Pancak
+"pancakes,plain,from mix",60,2.0,8,2.0,1 Pancak
+"pancakes,plain,home recipe",60,2.0,9,2.0,1 Pancak
+"papayas,raw",65,1.0,17,0.0,1 Cup
+paprika,5,0.0,1,0.0,1 Tsp
+"parmesan cheese,grated",455,42.0,4,30.0,1 Cup
+"parsley,freeze-dried",0,0.0,0,0.0,1 Tbsp
+"parsley,raw",5,0.0,1,0.0,10 Sprig
+"parsnips,cooked,drained",125,2.0,30,0.0,1 Cup
+"pasterzd proces cheese,americn",105,6.0,0,9.0,1 oz
+"pasterzd proces cheese,swiss",95,7.0,1,7.0,1 oz
+"pasterzd proces chese food,amr",95,6.0,2,7.0,1 oz
+"pasterzd proces chese spred,am",80,5.0,2,6.0,1 oz
+"pea beans,dry,cooked,drained",225,15.0,40,1.0,1 Cup
+"pea,green,soup,canned",165,9.0,27,3.0,1 Cup
+peach pie,2410,24.0,361,101.0,1 Pie
+"peaches,canned,heavy syrup",190,1.0,51,0.0,1 Cup
+"peaches,canned,juice pack",110,2.0,29,0.0,1 Cup
+"peaches,dried",380,6.0,98,1.0,1 Cup
+"peaches,dried,cooked,unswetnd",200,3.0,51,1.0,1 Cup
+"peaches,frozen,swetned,w/vitc",265,2.0,68,0.0,10 oz
+"peaches,raw",35,1.0,10,0.0,1 Peach
+"peaches,raw,sliced",75,1.0,19,0.0,1 Cup
+peanut butter,95,5.0,3,8.0,1 Tbsp
+"peanut butter cookie,home recp",245,4.0,28,14.0,4 Cookie
+peanut oil,1910,0.0,0,216.0,1 Cup
+"peanuts,oil roasted,salted",840,39.0,27,71.0,1 Cup
+"peanuts,oil roasted,unsalted",840,39.0,27,71.0,1 Cup
+"pears,canned,heavy syrup",190,1.0,49,0.0,1 Cup
+"pears,canned,juice pack",125,1.0,32,0.0,1 Cup
+"pears,raw,bartlett",100,1.0,25,1.0,1 Pear
+"pears,raw,bosc",85,1.0,21,1.0,1 Pear
+"pears,raw,d'anjou",120,1.0,30,1.0,1 Pear
+"peas,edible pod,cooked,drned",65,5.0,11,0.0,1 Cup
+"peas,green,cnnd,drnd,w/ salt",115,8.0,21,1.0,1 Cup
+"peas,green,cnnd,drnd,w/o salt",115,8.0,21,1.0,1 Cup
+"peas,grn,frozen cooked,draned",125,8.0,23,0.0,1 Cup
+"peas,split,dry,cooked",230,16.0,42,1.0,1 Cup
+pecan pie,3450,42.0,423,189.0,1 Pie
+"pecans,halves",720,8.0,20,73.0,1 Cup
+"pepper,black",5,0.0,1,0.0,1 Tsp
+pepper-type soda,160,0.0,41,0.0,12 fl oz
+"peppers,hot chili,raw,green",20,1.0,4,0.0,1 Pepper
+"peppers,hot chili,raw,red",20,1.0,4,0.0,1 Pepper
+"peppers,sweet,cooked,green",15,0.0,3,0.0,1 Pepper
+"peppers,sweet,cooked,red",15,0.0,3,0.0,1 Pepper
+"peppers,sweet,raw,green",20,1.0,4,0.0,1 Pepper
+"peppers,sweet,raw,red",20,1.0,4,0.0,1 Pepper
+"pickles,cucumber,dill",5,0.0,1,0.0,1 Pickle
+"pickles,cucumber,fresh pack",10,0.0,3,0.0,2 Slices
+"pickles,cucumber,swt gherkin",20,0.0,5,0.0,1 Pickle
+"piecrust,from home recipe",900,11.0,79,60.0,1 Shell
+"piecrust,from mix",1485,20.0,141,93.0,2 Crust
+pine nuts,160,3.0,5,17.0,1 oz
+"pineapple juice,canned,unswtn",140,1.0,34,0.0,1 Cup
+"pineapple,canned,heavy syrup",200,1.0,52,0.0,1 Cup
+"pineapple,canned,juice pack",150,1.0,39,0.0,1 Cup
+"pineapple,raw,diced",75,1.0,19,1.0,1 Cup
+pineapple-grapefruit juicedrnk,90,0.0,23,0.0,6 fl oz
+"pinto beans,dry,cooked,drained",265,15.0,49,1.0,1 Cup
+pistachio nuts,165,6.0,7,14.0,1 oz
+pita bread,165,6.0,33,1.0,1 Pita
+pizza,285,12.0,36,10.0,1 slice
+pizza,290,14.0,38,12.0,1 slice
+"pizza,cheese",290,15.0,39,9.0,1 Slice
+"plantains,cooked",180,1.0,48,0.0,1 Cup
+"plantains,raw",220,2.0,57,1.0,1 Plantn
+"plums,canned,heavy syrup",230,1.0,60,0.0,1 Cup
+"plums,canned,juice pack",145,1.0,38,0.0,1 Cup
+"plums,raw,1-1/2-in diam",15,0.0,4,0.0,1 Plum
+"plums,raw,2-1/8-in diam",35,1.0,9,0.0,1 Plum
+"popcorn,air-popped,unsalted",30,1.0,6,0.0,1 Cup
+"popcorn,popped,veg oil,saltd",55,1.0,6,3.0,1 Cup
+"popcorn,sugar syrup coated",135,2.0,30,1.0,1 Cup
+popsicle,70,0.0,18,0.0,1 Popcle
+"pork chop,loin,broil,lean",165,23.0,0,8.0,2.5 oz
+"pork chop,loin,broil,len+ft",275,24.0,0,19.0,3.1 oz
+"pork chop,loin,panfry,lean",180,19.0,0,11.0,2.4 oz
+"pork chop,loin,panfry,lean+ft",335,21.0,0,27.0,3.1 oz
+"pork fresh ham,roastd,lean",160,20.0,0,8.0,2.5 oz
+"pork fresh ham,roastd,lean+ft",250,21.0,0,18.0,3 oz
+"pork fresh rib,roastd,lean",175,20.0,0,10.0,2.5 oz
+"pork fresh rib,roastd,lean+ft",270,21.0,0,20.0,3 oz
+"pork shoulder,braisd,lean",165,22.0,0,8.0,2.4 oz
+"pork shoulder,braisd,lean+fat",295,23.0,0,22.0,3 oz
+"pork,cured,bacon,canadn,cked",85,11.0,1,4.0,2 Slice
+"pork,cured,bacon,regul,cked",110,6.0,0,9.0,3 Slice
+"pork,cured,ham,canned,roast",140,18.0,0,7.0,3 oz
+"pork,cured,ham,rosted,lean",105,17.0,0,4.0,2.4 oz
+"pork,cured,ham,rosted,ln+ft",205,18.0,0,14.0,3 oz
+"pork,link,cooked",50,3.0,0,4.0,1 Link
+"pork,luncheon meat,canned",140,5.0,1,13.0,2 Slices
+"pork,luncheon meat,choppd ham",95,7.0,0,7.0,2 Slices
+"pork,luncheon meat,ckd ham,ln",75,11.0,1,3.0,2 Slices
+"pork,luncheon meat,ckd ham,rg",105,10.0,2,6.0,2 Slices
+potato chips,105,1.0,10,7.0,10 Chips
+potato salad made w/ mayonnais,360,7.0,28,21.0,1 Cup
+"potatoes,au gratin,from mix",230,6.0,31,10.0,1 Cup
+"potatoes,au gratin,home recp",325,12.0,28,19.0,1 Cup
+"potatoes,baked flesh only",145,3.0,34,0.0,1 Potato
+"potatoes,baked with skin",220,5.0,51,0.0,1 Potato
+"potatoes,boiled,peeled after",120,3.0,27,0.0,1 Potato
+"potatoes,boiled,peeled befor",115,2.0,27,0.0,1 Potato
+"potatoes,french-frd,frzn,fried",160,2.0,20,8.0,10 Strip
+"potatoes,french-frd,frzn,oven",110,2.0,17,4.0,10 Strip
+"potatoes,hashed brown,fr frzn",340,5.0,44,18.0,1 Cup
+"potatoes,mashed,frm dehydrted",235,4.0,32,12.0,1 Cup
+"potatoes,mashed,recpe,mlk+mar",225,4.0,35,9.0,1 Cup
+"potatoes,mashed,recpe,w/ milk",160,4.0,37,1.0,1 Cup
+"potatoes,scalloped,from mix",230,5.0,31,11.0,1 Cup
+"potatoes,scalloped,home recp",210,7.0,26,9.0,1 Cup
+"pound cake,commercial",1935,26.0,257,94.0,1 Loaf
+"pound cake,from home recipe",2025,33.0,265,94.0,1 Loaf
+"pretzels,stick",10,0.0,2,0.0,10 Pretz
+"pretzels,twisted,dutch",65,2.0,13,1.0,1 Pretz
+"pretzels,twisted,thin",240,6.0,48,2.0,10 Pretz
+product 19 cereal,110,3.0,24,0.0,1 oz
+provolone cheese,100,7.0,1,8.0,1 oz
+"prune juice,canned",180,2.0,45,0.0,1 Cup
+"prunes,dried",115,1.0,31,0.0,5 Large
+"prunes,dried,cooked,unswtned",225,2.0,60,0.0,1 Cup
+"pudding,choc,cooked from mix",150,4.0,25,4.0,1/2 Cup
+"pudding,choc,instant,fr mix",155,4.0,27,4.0,1/2 Cup
+"pudding,chocolate,canned",205,3.0,30,11.0,5 oz
+"pudding,rice,from mix",155,4.0,27,4.0,1/2 Cup
+"pudding,tapioca,canned",160,3.0,28,5.0,5 oz
+"pudding,tapioca,from mix",145,4.0,25,4.0,1/2 Cup
+"pudding,vanilla,canned",220,2.0,33,10.0,5 oz
+"pudding,vnlla,cooked from mix",145,4.0,25,4.0,1/2 Cup
+"pudding,vnlla,instant frm mix",150,4.0,27,4.0,1/2 Cup
+pumpernickel bread,1160,42.0,218,16.0,1 Loaf
+"pumpernickel bread,toasted",80,3.0,16,1.0,1 Slice
+pumpkin and squash kernels,155,7.0,5,13.0,1 oz
+pumpkin pie,1920,36.0,223,102.0,1 Pie
+"pumpkin,canned",85,3.0,20,1.0,1 Cup
+"pumpkin,cooked from raw",50,2.0,12,0.0,1 Cup
+quiche lorraine,600,13.0,29,48.0,1 Slice
+"radishes,raw",5,0.0,1,0.0,4 Radish
+"raisin bran,kellogg's",90,3.0,21,1.0,1 oz
+"raisin bran,post",85,3.0,21,1.0,1 oz
+raisin bread,1260,37.0,239,18.0,1 Loaf
+"raisin bread,toasted",65,2.0,13,1.0,1 Slice
+raisins,435,5.0,115,1.0,1 Cup
+"raspberries,frozen,sweetened",295,2.0,74,0.0,10 oz
+"raspberries,raw",60,1.0,14,1.0,1 Cup
+"red kidney beans,dry,canned",230,15.0,42,1.0,1 Cup
+"refried beans,canned",295,18.0,51,3.0,1 Cup
+"relish,sweet",20,0.0,5,0.0,1 Tbsp
+"rhubarb,cooked,added sugar",280,1.0,75,0.0,1 Cup
+rice,206,4.3,45,0.4,1 cup
+rice krispies cereal,110,2.0,25,0.0,1 oz
+"rice,brown,cooked",230,5.0,50,1.0,1 Cup
+"rice,white,cooked",225,4.0,50,0.0,1 Cup
+"rice,white,instant,cooked",180,4.0,40,0.0,1 Cup
+"rice,white,parboiled,cooked",185,4.0,41,0.0,1 Cup
+"rice,white,parboiled,raw",685,14.0,150,1.0,1 Cup
+"rice,white,raw",670,12.0,149,1.0,1 Cup
+"ricotta cheese,part skim milk",340,28.0,13,19.0,1 Cup
+"ricotta cheese,whole milk",430,28.0,7,32.0,1 Cup
+roast beef sandwich,345,22.0,34,13.0,1 Sandwh
+"rolls,dinner,commercial",85,2.0,14,2.0,1 Roll
+"rolls,dinner,home recipe",120,3.0,20,3.0,1 Roll
+"rolls,frankfurter + hamburger",115,3.0,20,2.0,1 Roll
+"rolls,hard",155,5.0,30,2.0,1 Roll
+"rolls,hoagie or submarine",400,11.0,72,8.0,1 Roll
+root beer,165,0.0,42,0.0,12 fl oz
+"rye bread,light",1190,38.0,218,17.0,1 Loaf
+"rye bread,light,toasted",65,2.0,12,1.0,1 Slice
+"rye wafers,whole-grain",55,1.0,10,1.0,2 Wafers
+safflower oil,1925,0.0,0,218.0,1 Cup
+"salami,cooked type",145,8.0,1,11.0,2 Slices
+"salami,dry type",85,5.0,1,7.0,2 Slices
+"salmon,baked,red",140,21.0,0,5.0,3 oz
+"salmon,canned,pink,w/ bones",120,17.0,0,5.0,3 oz
+"salmon,smoked",150,18.0,0,8.0,3 oz
+salt,0,0.0,0,0.0,1 Tsp
+saltines,50,1.0,9,1.0,4 Crackr
+sandwich,350,15.0,40,12.0,1 sandwich
+"sandwich spread,pork,beef",35,1.0,2,3.0,1 Tbsp
+sandwich type cookie,195,2.0,29,8.0,4 Cookie
+"sardines,atlntc,cnned,oil,drn",175,20.0,0,9.0,3 oz
+"sauerkraut,canned",45,2.0,10,0.0,1 Cup
+"scallops,breaded,frzn,reheat",195,15.0,10,10.0,6 Scalop
+"seaweed,kelp,raw",10,0.0,3,0.0,1 oz
+"seaweed,spirulina,dried",80,16.0,7,2.0,1 oz
+"self-rising flour,unsifted",440,12.0,93,1.0,1 Cup
+semisweet chocolate,860,7.0,97,61.0,1 Cup
+sesame seeds,45,2.0,1,4.0,1 Tbsp
+"shakes,thick,chocolate",335,9.0,60,8.0,10 oz
+"shakes,thick,vanilla",315,11.0,50,9.0,10 oz
+"sheetcake w/o frstng,recipe",2830,35.0,434,108.0,1 Cake
+"sheetcake,w/ whfrstng,recipe",4020,37.0,694,129.0,1 Cake
+"sheetcake,w/o frstng,recipe",315,4.0,48,12.0,1 Piece
+"sherbet,2% fat",2160,17.0,469,31.0,1/2 Gal
+"shortbread cookie,commercial",155,2.0,20,8.0,4 Cookie
+"shortbread cookie,home recipe",145,2.0,17,8.0,2 Cookie
+shredded wheat cereal,100,3.0,23,1.0,1 oz
+"shrimp,canned,drained",100,21.0,1,1.0,3 oz
+"shrimp,french fried",200,16.0,11,10.0,3 oz
+"snack cakes,devils food,cremfl",105,1.0,17,4.0,Sm Cake
+"snack cakes,sponge creme fllng",155,1.0,27,5.0,Sm Cake
+snack type crackers,15,0.0,2,1.0,1 Crackr
+"snap bean,cnnd,drnd,green,salt",25,2.0,6,0.0,1 Cup
+"snap bean,cnnd,drnd,grn,nosalt",25,2.0,6,0.0,1 Cup
+"snap bean,cnnd,drnd,yllw,nosal",25,2.0,6,0.0,1 Cup
+"snap bean,cnnd,drnd,yllw,salt",25,2.0,6,0.0,1 Cup
+"snap bean,frz,ckd,drnd,green",35,2.0,8,0.0,1 Cup
+"snap bean,frz,ckd,drnd,yellow",35,2.0,8,0.0,1 Cup
+"snap bean,raw,ckd,drnd,green",45,2.0,10,0.0,1 Cup
+"snap bean,raw,ckd,drnd,yellow",45,2.0,10,0.0,1 Cup
+sour cream,495,7.0,10,48.0,1 Cup
+soy sauce,10,2.0,2,0.0,1 Tbsp
+"soybean oil,hydrogenated",1925,0.0,0,218.0,1 Cup
+"soybean-cottonseed oil,hydrgn",1925,0.0,0,218.0,1 Cup
+"soybeans,dry,cooked,drained",235,20.0,19,10.0,1 Cup
+"spaghetti,cooked,firm",190,7.0,39,1.0,1 Cup
+"spaghetti,cooked,tender",155,5.0,32,1.0,1 Cup
+"spaghetti,meatballs,tomsa,hmrp",330,19.0,39,12.0,1 Cup
+"spaghetti,meatballs,tomsac,cnd",260,12.0,29,10.0,1 Cup
+"spaghetti,tom sauce chee,hmrp",260,9.0,37,9.0,1 Cup
+"spaghetti,tom sauce chees,cnd",190,6.0,39,2.0,1 Cup
+special k cereal,110,6.0,21,0.0,1 oz
+spinach souffle,220,11.0,3,18.0,1 Cup
+"spinach,canned,drnd,w/ salt",50,6.0,7,1.0,1 Cup
+"spinach,canned,drnd,w/o salt",50,6.0,7,1.0,1 Cup
+"spinach,cooked fr frzen,drnd",55,6.0,10,0.0,1 Cup
+"spinach,cooked from raw,drnd",40,5.0,7,0.0,1 Cup
+"spinach,raw",10,2.0,2,0.0,1 Cup
+"squash,summer,cooked,draind",35,2.0,8,1.0,1 Cup
+"squash,winter,baked",80,2.0,18,1.0,1 Cup
+"strawberries,frozen,sweetend",275,2.0,74,0.0,10 oz
+"strawberries,raw",45,1.0,10,1.0,1 Cup
+"sugar cookie,from refrig dogh",235,2.0,31,12.0,4 Cookie
+"sugar frosted flakes,kellogg",110,1.0,26,0.0,1 oz
+sugar smacks cereal,105,2.0,25,1.0,1 oz
+"sugar,brown,pressed down",820,0.0,212,0.0,1 Cup
+"sugar,powdered,sifted",385,0.0,100,0.0,1 Cup
+"sugar,white,granulated",770,0.0,199,0.0,1 Cup
+sunflower oil,1925,0.0,0,218.0,1 Cup
+sunflower seeds,160,6.0,5,14.0,1 oz
+super sugar crisp cereal,105,2.0,26,0.0,1 oz
+sweet (dark) chocolate,150,1.0,16,10.0,1 oz
+sweetened condensed milk cnnd,980,24.0,166,27.0,1 Cup
+"sweetpotatoes,baked,peeled",115,2.0,28,0.0,1 Potato
+"sweetpotatoes,boiled w/o peel",160,2.0,37,0.0,1 Potato
+"sweetpotatoes,candied",145,1.0,29,3.0,1 Piece
+"sweetpotatoes,canned,mashed",260,5.0,59,1.0,1 Cup
+"sweetpotatoes,cnned,vac pack",35,1.0,8,0.0,1 Piece
+swiss cheese,105,8.0,1,8.0,1 oz
+"syrup,chocolate flavored thin",85,1.0,22,0.0,2 Tbsp
+"syrup,chocolate flvred,fudge",125,2.0,21,5.0,2 Tbsp
+table syrup (corn and maple),122,0.0,32,0.0,2 Tbsp
+taco,200,10.0,20,10.0,1 taco
+taco,195,9.0,15,11.0,1 Taco
+tahini,90,3.0,3,8.0,1 Tbsp
+"tangerine juice,canned,swtned",125,1.0,30,0.0,1 Cup
+"tangerines,canned,light syrp",155,1.0,41,0.0,1 Cup
+"tangerines,raw",35,1.0,9,0.0,1 Tangrn
+taquito,250,8.0,22,15.0,1 taquito
+tartar sauce,75,0.0,1,8.0,1 Tbsp
+"tea,brewed",0,0.0,0,0.0,8 fl oz
+"tea,instant,prepard,sweetened",85,0.0,22,0.0,8 fl oz
+"tea,instant,preprd,unsweetend",0,0.0,1,0.0,8 fl oz
+toaster pastries,210,2.0,38,6.0,1 Pastry
+tofu,85,9.0,3,5.0,1 Piece
+"tomato juice,canned w/o salt",40,2.0,10,0.0,1 Cup
+"tomato juice,canned with salt",40,2.0,10,0.0,1 Cup
+"tomato paste,canned w/o salt",220,10.0,49,2.0,1 Cup
+"tomato paste,canned with salt",220,10.0,49,2.0,1 Cup
+"tomato puree,canned w/o salt",105,4.0,25,0.0,1 Cup
+"tomato puree,canned with salt",105,4.0,25,0.0,1 Cup
+"tomato sauce,canned with salt",75,3.0,18,0.0,1 Cup
+"tomato soup w/ water,canned",85,2.0,17,2.0,1 Cup
+"tomato soup with milk,canned",160,6.0,22,6.0,1 Cup
+"tomato veg soup,dehyd,prepred",40,1.0,8,1.0,1 Pkt
+"tomatoes,canned,s+l,w/ salt",50,2.0,10,1.0,1 Cup
+"tomatoes,canned,s+l,w/o salt",50,2.0,10,1.0,1 Cup
+"tomatoes,raw",25,1.0,5,0.0,1 Tomato
+"tortillas,corn",65,2.0,13,1.0,1 Tortla
+total cereal,100,3.0,22,1.0,1 oz
+trix cereal,110,2.0,25,0.0,1 oz
+"trout,broiled,w/ buttr,lemju",175,21.0,0,9.0,3 oz
+tuna salad,375,33.0,19,19.0,1 Cup
+"tuna,cannd,drnd,oil,chk,lght",165,24.0,0,7.0,3 oz
+"tuna,cannd,drnd,watr,white",135,30.0,0,1.0,3 oz
+"turkey ham,cured turkey thigh",75,11.0,0,3.0,2 Slices
+"turkey loaf,breast meat w/o c",45,10.0,0,1.0,2 Slices
+"turkey loaf,breast meat,w/ c",45,10.0,0,1.0,2 Slices
+"turkey patties,brd,battd,frid",180,9.0,10,12.0,1 Patty
+"turkey roast,frzn,lght+drk,ck",130,18.0,3,5.0,3 oz
+"turkey,roasted,dark meat",160,24.0,0,6.0,4 Pieces
+"turkey,roasted,light + dark",240,41.0,0,7.0,1 Cup
+"turkey,roasted,light meat",135,25.0,0,3.0,2 Pieces
+"turnip greens,cked frm frozen",50,5.0,8,1.0,1 Cup
+"turnip greens,cooked from raw",30,2.0,6,0.0,1 Cup
+"turnips,cooked,diced",30,1.0,8,0.0,1 Cup
+vanilla wafers,185,2.0,29,7.0,10 Cooke
+"veal cutlet,med fat,brsd,brld",185,23.0,0,9.0,3 oz
+"veal rib,med fat,roasted",230,23.0,0,14.0,3 oz
+"vegetable beef soup,canned",80,6.0,10,2.0,1 Cup
+"vegetable juice cocktail,cnnd",45,2.0,11,0.0,1 Cup
+"vegetables,mixed,canned",75,4.0,15,0.0,1 Cup
+"vegetables,mixed,cked fr frz",105,5.0,24,0.0,1 Cup
+"vegetarian soup,canned",70,2.0,12,2.0,1 Cup
+vienna bread,70,2.0,13,1.0,1 Slice
+vienna sausage,45,2.0,0,4.0,1 Sausag
+vinegar and oil salad dressing,70,0.0,0,8.0,1 Tbsp
+"vinegar,cider",0,0.0,1,0.0,1 Tbsp
+"waffles,from home recipe",245,7.0,26,13.0,1 Waffle
+"waffles,from mix",205,7.0,27,8.0,1 Waffle
+"walnuts,black,chopped",760,30.0,15,71.0,1 Cup
+"walnuts,english,pieces",770,17.0,22,74.0,1 Cup
+"water chestnuts,canned",70,1.0,17,0.0,1 Cup
+"watermelon,raw",155,3.0,35,2.0,1 Piece
+"watermelon,raw,diced",50,1.0,11,1.0,1 Cup
+wheat bread,1160,43.0,213,19.0,1 Loaf
+"wheat bread,toasted",65,3.0,12,1.0,1 Slice
+"wheat flour,all-purpose,siftd",420,12.0,88,1.0,1 Cup
+"wheat flour,all-purpose,unsif",455,13.0,95,1.0,1 Cup
+"wheat,thin crackers",35,1.0,5,1.0,4 Crackr
+wheaties cereal,100,3.0,23,0.0,1 oz
+"whipped topping,pressurized",155,2.0,7,13.0,1 Cup
+"whipping cream,unwhiped,heavy",820,5.0,7,88.0,1 Cup
+"whipping cream,unwhiped,light",700,5.0,7,74.0,1 Cup
+white bread,1210,38.0,222,18.0,1 Loaf
+"white bread crumbs,soft",120,4.0,22,2.0,1 Cup
+white bread cubes,80,2.0,15,1.0,1 Cup
+"white bread,slice 18 per loaf",65,2.0,12,1.0,1 Slice
+"white bread,slice 22 per loaf",55,2.0,10,1.0,1 Slice
+"white bread,toasted 18 per",65,2.0,12,1.0,1 Slice
+"white bread,toasted 22 per",55,2.0,10,1.0,1 Slice
+"white cake w/ wht frstng,comml",4170,43.0,670,148.0,1 Cake
+white sauce w/ milk from mix,240,10.0,21,13.0,1 Cup
+"white sauce,medium,home recp",395,10.0,24,30.0,1 Cup
+whole-wheat bread,1110,44.0,206,20.0,1 Loaf
+"whole-wheat bread,toasted",70,3.0,13,1.0,1 Slice
+"whole-wheat flour,hrd wht,stir",400,16.0,85,2.0,1 Cup
+"whole-wheat wafers,crackers",35,1.0,5,2.0,2 Crackr
+"wine,dessert",140,0.0,8,0.0,3.5 fl oz
+"wine,table,red",75,0.0,3,0.0,3.5 fl oz
+"wine,table,white",80,0.0,3,0.0,3.5 fl oz
+"yeast,bakers,dry,active",20,3.0,3,0.0,1 Pkg
+"yeast,brewers,dry",25,3.0,3,0.0,1 Tbsp
+"yellow cake w/ choc frst,frmix",3735,45.0,638,125.0,1 Cake
+"yellowcake w/ chocfrstng,comml",3895,40.0,620,175.0,1 Cake
+"yogurt,w/ lofat milk,fruitflv",230,10.0,43,2.0,8 oz
+"yogurt,w/ lofat milk,plain",145,12.0,16,4.0,8 oz
+"yogurt,w/ nonfat milk",125,13.0,17,0.0,8 oz
+"yogurt,w/ whole milk",140,8.0,11,7.0,8 oz

@@ -1,0 +1,747 @@
+package com.calsnap1;
+
+import android.Manifest;
+import android.app.Activity;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.provider.MediaStore;
+import android.text.TextUtils;
+import android.view.View;
+import android.webkit.ValueCallback;
+import android.webkit.WebResourceError;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
+
+public class CameraActivity extends AppCompatActivity {
+    private static final int CAMERA_REQUEST = 100;
+    private static final int GALLERY_REQUEST = 101;
+    private static final int CAMERA_PERMISSION_REQUEST = 102;
+
+    private static final int WEBVIEW_REQUEST_CODE = 500;
+
+    // Rate limiting: 1 request per minute
+    private static final long ONLINE_SEARCH_COOLDOWN_MS = 60000;
+    private long lastOnlineSearchTime = 0;
+
+    private ImageView photoPreview;
+    private TextView resultText;
+    // Add these variables
+    //2609040846
+    //private WebView webView;
+    private String currentSearchEngine = "";
+    private Button searchGoogleBtn, searchBingBtn, searchYandexBtn;
+    private Button captureBtn, galleryBtn, useFoodBtn, backBtn;
+    private Button searchOnlineBtn, searchAiBtn;
+    private Button fixBtn;
+
+    private DatabaseHelper dbHelper;
+    private FoodClassifier classifier;
+
+    private Bitmap capturedImage;
+    private String recognizedFood = "";
+    private String currentModelOutput = "";
+
+    // For online search
+    private WebView hiddenWebView;
+    private String lastFoundFood = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_camera);
+
+        dbHelper = new DatabaseHelper(this);
+        classifier = new FoodClassifier(this);
+
+        // Initialize views
+        photoPreview = findViewById(R.id.photoPreview);
+        resultText = findViewById(R.id.resultText);
+        captureBtn = findViewById(R.id.captureBtn);
+        galleryBtn = findViewById(R.id.galleryBtn);
+        useFoodBtn = findViewById(R.id.useFoodBtn);
+        fixBtn = findViewById(R.id.fixBtn);
+        backBtn = findViewById(R.id.backBtn);
+        searchOnlineBtn = findViewById(R.id.searchOnlineBtn);
+        searchAiBtn = findViewById(R.id.searchAiBtn);
+
+        // Hide buttons initially
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        searchOnlineBtn.setVisibility(View.GONE);
+        searchAiBtn.setVisibility(View.GONE);
+
+        //new search buttons
+        // In onCreate(), add button initialization
+        searchGoogleBtn = findViewById(R.id.searchGoogleBtn);
+        searchBingBtn = findViewById(R.id.searchBingBtn);
+        searchYandexBtn = findViewById(R.id.searchYandexBtn);
+
+
+
+        // Hidden WebView for online search
+        hiddenWebView = new WebView(this);
+        hiddenWebView.getSettings().setJavaScriptEnabled(true);
+        hiddenWebView.getSettings().setDomStorageEnabled(true);
+        hiddenWebView.getSettings().setUserAgentString("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36");
+
+
+        hiddenWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // Wait for the page to load
+                // Then extract the food name from the page title or content
+                view.evaluateJavascript(
+                        "document.title || 'Not found'",
+                        new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                String title = value.replace("\"", "").trim();
+                                // Clean up the title (remove search engine name)
+                                String foodName = cleanSearchResult(title);
+                                if (!foodName.equals("Not found") && !foodName.isEmpty()) {
+                                    resultText.setText("✅ Found: " + foodName);
+                                    recognizedFood = foodName;
+                                    useFoodBtn.setVisibility(View.VISIBLE);
+                                    useFoodBtn.setText("📝 Use \"" + foodName + "\"");
+                                    Toast.makeText(CameraActivity.this, "Found: " + foodName, Toast.LENGTH_SHORT).show();
+                                } else {
+                                    resultText.setText("❌ No food found. Try another search engine.");
+                                }
+                            }
+                        }
+                );
+            }
+
+            @Override
+            public void onReceivedError(WebView view, WebResourceRequest request, WebResourceError error) {
+                resultText.setText("❌ WebView error: " + error.getDescription());
+                Toast.makeText(CameraActivity.this, "Search error", Toast.LENGTH_SHORT).show();
+            }
+        });
+        //hiddenWebView.setWebclient
+
+        // Button listeners
+        searchGoogleBtn.setOnClickListener(v -> {
+            if (capturedImage == null) {
+                Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            performSearch("google");
+        });
+
+        searchBingBtn.setOnClickListener(v -> {
+            if (capturedImage == null) {
+                Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            performSearch("bing");
+        });
+
+        searchYandexBtn.setOnClickListener(v -> {
+            if (capturedImage == null) {
+                Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            performSearch("yandex");
+        });
+
+
+
+
+
+
+        /*
+        hiddenWebView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                // Extract the "Best Guess" from the page
+                view.evaluateJavascript(
+                        "document.querySelector('div[jsname]')?.innerText || " +
+                                "document.querySelector('div[data-attrid]')?.innerText || " +
+                                "document.querySelector('h2')?.innerText || " +
+                                "'Not found'",
+                        new ValueCallback<String>() {
+                            @Override
+                            public void onReceiveValue(String value) {
+                                String foodName = value.replace("\"", "").trim();
+                                if (!foodName.isEmpty() && !foodName.equals("Not found") && !foodName.equals("null")) {
+                                    lastFoundFood = foodName;
+                                    resultText.setText("🔍 Online found: " + foodName);
+                                    recognizedFood = foodName;
+                                    useFoodBtn.setVisibility(View.VISIBLE);
+                                    useFoodBtn.setText("📝 Use \"" + foodName + "\"");
+                                    Toast.makeText(CameraActivity.this, "Found: " + foodName, Toast.LENGTH_LONG).show();
+                                } else {
+                                    resultText.setText("❌ Online search: No food found.\nTry AI Search or manual entry.");
+                                    Toast.makeText(CameraActivity.this, "No food found online", Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }
+                );
+            }
+        });
+
+        */
+
+        // Capture button
+        /*
+        captureBtn.setOnClickListener(v -> {
+            Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+            if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+                startActivityForResult(cameraIntent, CAMERA_REQUEST);
+            } else {
+                Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+         */
+
+
+
+
+        captureBtn.setOnClickListener(v -> {
+            openCamera();  // Now requests permission if needed
+        });
+
+        // Gallery button
+        galleryBtn.setOnClickListener(v -> {
+            Intent pickPhoto = new Intent(Intent.ACTION_PICK,
+                    MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(pickPhoto, GALLERY_REQUEST);
+        });
+
+        // Back button
+        backBtn.setOnClickListener(v -> finish());
+
+        // Use Food button
+        useFoodBtn.setOnClickListener(v -> {
+            if (!TextUtils.isEmpty(recognizedFood)) {
+                Intent resultIntent = new Intent();
+                resultIntent.putExtra("FOOD_NAME", recognizedFood);
+                setResult(RESULT_OK, resultIntent);
+                finish();
+            } else {
+                Toast.makeText(this, "No food recognized", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        // Fix button
+        fixBtn.setOnClickListener(v -> {
+            if (TextUtils.isEmpty(currentModelOutput)) {
+                showFixDialog("food", recognizedFood.isEmpty() ? "food" : recognizedFood);
+            } else {
+                showFixDialog(currentModelOutput, recognizedFood.isEmpty() ? currentModelOutput : recognizedFood);
+            }
+        });
+
+        // ============================================================
+        // SEARCH ONLINE BUTTON
+        // ============================================================
+        searchOnlineBtn.setOnClickListener(v -> {
+            if (capturedImage == null) {
+                Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Rate limiting
+            long now = System.currentTimeMillis();
+            if (now - lastOnlineSearchTime < ONLINE_SEARCH_COOLDOWN_MS) {
+                long remaining = (ONLINE_SEARCH_COOLDOWN_MS - (now - lastOnlineSearchTime)) / 1000;
+                Toast.makeText(this, "Please wait " + remaining + " seconds before searching again", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Check internet connectivity
+            if (!isNetworkAvailable()) {
+                Toast.makeText(this, "No internet connection. Use AI Search instead.", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            lastOnlineSearchTime = now;
+            resultText.setText("🔍 Searching online...");
+            searchOnlineBtn.setEnabled(false);
+
+            // Upload and search
+            uploadImageForOnlineSearch(capturedImage);
+        });
+
+        // ============================================================
+        // SEARCH AI BUTTON
+        // ============================================================
+        searchAiBtn.setOnClickListener(v -> {
+            if (capturedImage == null) {
+                Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            resultText.setText("🧠 Analyzing with AI...");
+            recognizeFoodWithAI(capturedImage);
+        });
+    }//onCreate()
+
+
+    private void performSearch(String engine) {
+        resultText.setText("🔍 Searching " + engine + "...");
+        Toast.makeText(this, "🔍 Searching " + engine + "...", Toast.LENGTH_SHORT).show();
+
+        // Save image to temp file
+        File imageFile = saveImageToTemp(capturedImage);
+        if (imageFile == null) {
+            resultText.setText("❌ Failed to save image");
+            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // For Google, Bing, Yandex, we need to upload the image first
+        // Then load the search URL in the WebView
+        uploadAndSearch(engine, imageFile);
+    }//performSearch
+
+    private void uploadAndSearch(String engine, File imageFile) {
+        new Thread(() -> {
+            try {
+                String searchUrl = "";
+                String engineName = engine.substring(0, 1).toUpperCase() + engine.substring(1);
+
+                switch (engine) {
+                    case "google":
+                        searchUrl = uploadToGoogle(imageFile);
+                        break;
+                    case "bing":
+                        searchUrl = uploadToBing(imageFile);
+                        break;
+                    case "yandex":
+                        searchUrl = uploadToYandex(imageFile);
+                        break;
+                    default:
+                        runOnUiThread(() -> {
+                            resultText.setText("❌ Unknown search engine");
+                            Toast.makeText(CameraActivity.this, "Unknown search engine", Toast.LENGTH_SHORT).show();
+                        });
+                        return;
+                }
+
+                if (searchUrl != null && !searchUrl.isEmpty()) {
+                    final String finalUrl = searchUrl;
+                    runOnUiThread(() -> {
+                        resultText.setText("🔍 Loading " + engineName + " results...");
+                        hiddenWebView.loadUrl(finalUrl);
+                    });
+                } else {
+                    runOnUiThread(() -> {
+                        resultText.setText("❌ " + engineName + " search failed");
+                        Toast.makeText(CameraActivity.this, "Search failed", Toast.LENGTH_SHORT).show();
+                    });
+                }
+            } catch (Exception e) {
+                runOnUiThread(() -> {
+                    resultText.setText("❌ Error: " + e.getMessage());
+                    Toast.makeText(CameraActivity.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            }
+        }).start();
+    }//uploadAndSearch
+
+    //upload method for each engibe
+
+    private String uploadToGoogle(File imageFile) throws IOException {
+        OkHttpClient client = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS)
+                .build();
+
+        RequestBody requestBody = new MultipartBody.Builder()
+                .setType(MultipartBody.FORM)
+                .addFormDataPart("encoded_image", imageFile.getName(),
+                        RequestBody.create(MediaType.parse("image/jpeg"), imageFile))
+                .addFormDataPart("sch", "sch")
+                .build();
+
+        Request request = new Request.Builder()
+                .url("https://www.google.com/searchbyimage/upload")
+                .post(requestBody)
+                .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                .build();
+
+        try (Response response = client.newCall(request).execute()) {
+            String location = response.header("Location");
+            if (location != null && location.startsWith("/searchbyimage")) {
+                return "https://www.google.com" + location;
+            }
+            // Try to extract from body
+            String body = response.body().string();
+            return extractUrlFromBody(body);
+        }
+    }
+
+    private String uploadToBing(File imageFile) throws IOException {
+        // Bing image search endpoint
+        // Note: Bing requires a different approach
+        // This is a placeholder - Bing often requires more complex upload
+        return "https://www.bing.com/images/search?q=" + URLEncoder.encode(imageFile.getName(), "UTF-8");
+    }
+
+    private String uploadToYandex(File imageFile) throws IOException {
+        // Yandex image search endpoint
+        // This is a placeholder
+        return "https://yandex.com/images/search?rpt=imageview&text=" + URLEncoder.encode(imageFile.getName(), "UTF-8");
+    }
+
+    private String extractUrlFromBody(String body) {
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("https?://www\\.google\\.com/searchbyimage[^\"\\s]+");
+        java.util.regex.Matcher matcher = pattern.matcher(body);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+
+    private String cleanSearchResult(String title) {
+        // Remove search engine names from the title
+        title = title.replace("Google Image Search - ", "")
+                .replace("Bing Image Search - ", "")
+                .replace("Yandex Images - ", "");
+        String[] parts = title.split(" - ");
+        if (parts.length > 0 && !parts[0].isEmpty()) {
+            return parts[0].trim();
+        }
+        return title.trim();
+    }//cleanSearchResult
+
+    private File saveImageToTemp(Bitmap bitmap) {
+        try {
+            File imageFile = new File(getCacheDir(), "search_" + System.currentTimeMillis() + ".jpg");
+            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, fos);
+                fos.flush();
+            }
+            return imageFile;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }//saveImageToTemp
+
+
+
+
+
+    private void openCamera() {
+        // Check permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA)
+                != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this,
+                    new String[]{Manifest.permission.CAMERA},
+                    CAMERA_PERMISSION_REQUEST);
+            return;
+        }
+
+        // Open camera
+        Intent cameraIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        if (cameraIntent.resolveActivity(getPackageManager()) != null) {
+            startActivityForResult(cameraIntent, CAMERA_REQUEST);
+        } else {
+            Toast.makeText(this, "Camera not available", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    // ============================================================
+    // CHECK INTERNET AVAILABILITY
+    // ============================================================
+    private boolean isNetworkAvailable() {
+        try {
+            Process p = Runtime.getRuntime().exec("ping -c 1 8.8.8.8");
+            int returnCode = p.waitFor();
+            return returnCode == 0;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+
+    // ============================================================
+    // ONLINE SEARCH (Google Image Upload)
+    // ============================================================
+    private void uploadImageForOnlineSearch(Bitmap bitmap) {
+        // Save bitmap to temp file
+        File imageFile = null;
+        try {
+            imageFile = new File(getCacheDir(), "temp_search_" + System.currentTimeMillis() + ".jpg");
+            try (FileOutputStream fos = new FileOutputStream(imageFile)) {
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 60, fos);
+                fos.flush();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            resultText.setText("❌ Failed to save image");
+            searchOnlineBtn.setEnabled(true);
+            return;
+        }
+
+        final File finalImageFile = imageFile;
+
+        new Thread(() -> {
+            try {
+                // Build multipart request
+                RequestBody requestBody = new MultipartBody.Builder()
+                        .setType(MultipartBody.FORM)
+                        .addFormDataPart("encoded_image", finalImageFile.getName(),
+                                RequestBody.create(MediaType.parse("image/jpeg"), finalImageFile))
+                        .addFormDataPart("sch", "sch")
+                        .build();
+
+                OkHttpClient client = new OkHttpClient.Builder()
+                        .connectTimeout(15, TimeUnit.SECONDS)
+                        .readTimeout(30, TimeUnit.SECONDS)
+                        .build();
+
+                Request request = new Request.Builder()
+                        .url("https://www.google.com/searchbyimage/upload")
+                        .post(requestBody)
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36")
+                        .build();
+
+                try (Response response = client.newCall(request).execute()) {
+                    // Get redirect location
+                    String location = response.header("Location");
+                    if (location != null && location.startsWith("/searchbyimage")) {
+                        String searchUrl = "https://www.google.com" + location;
+                        runOnUiThread(() -> {
+                            resultText.setText("🔍 Loading search results...");
+                            // Use the hidden WebView to parse the result
+                            hiddenWebView.loadUrl(searchUrl);
+                            searchOnlineBtn.setEnabled(true);
+                        });
+                        return;
+                    }
+
+                    // Fallback: try to extract URL from body
+                    String body = response.body().string();
+                    String extractedUrl = extractUrlFromBody(body);
+                    if (extractedUrl != null) {
+                        final String finalUrl = extractedUrl;
+                        runOnUiThread(() -> {
+                            resultText.setText("🔍 Loading search results...");
+                            hiddenWebView.loadUrl(finalUrl);
+                            searchOnlineBtn.setEnabled(true);
+                        });
+                        return;
+                    }
+
+                    runOnUiThread(() -> {
+                        resultText.setText("❌ Online search failed. Try AI Search.");
+                        Toast.makeText(this, "Search failed", Toast.LENGTH_SHORT).show();
+                        searchOnlineBtn.setEnabled(true);
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                runOnUiThread(() -> {
+                    resultText.setText("❌ Error: " + e.getMessage());
+                    searchOnlineBtn.setEnabled(true);
+                    Toast.makeText(this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                });
+            } finally {
+                // Clean up temp file
+                if (finalImageFile.exists()) {
+                    finalImageFile.delete();
+                }
+            }
+        }).start();
+    }
+
+    private String extractUrlFromBody_old(String body) {
+        // Look for window.location or URL redirect
+        java.util.regex.Pattern pattern = java.util.regex.Pattern.compile("https?://www\\.google\\.com/searchbyimage[^\"\\s]+");
+        java.util.regex.Matcher matcher = pattern.matcher(body);
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
+    }
+
+    // ============================================================
+    // AI SEARCH (TFLite Model)
+    // ============================================================
+    private void recognizeFoodWithAI(Bitmap image) {
+        resultText.setText("🔍 Analyzing food...");
+        useFoodBtn.setVisibility(View.GONE);
+        fixBtn.setVisibility(View.GONE);
+        searchOnlineBtn.setVisibility(View.GONE);
+        searchAiBtn.setVisibility(View.GONE);
+        recognizedFood = "";
+        currentModelOutput = "";
+
+        FoodClassifier.ClassificationResult result = classifier.classifyFood(image, dbHelper);
+
+        String modelOutput = result.foodName;
+        float confidence = result.confidence;
+        currentModelOutput = modelOutput;
+
+        // If low confidence
+        if (modelOutput.equals("food") || confidence < 0.5f) {
+            resultText.setText("❌ AI uncertain.\nConfidence: " + String.format("%.0f%%", confidence * 100) +
+                    "\nTry Online Search or manual entry.");
+            fixBtn.setVisibility(View.VISIBLE);
+            fixBtn.setText("✏️ Enter food name...");
+            searchOnlineBtn.setVisibility(View.VISIBLE);
+            searchAiBtn.setVisibility(View.VISIBLE);
+            return;
+        }
+
+        String confidenceText = "Confidence: " + String.format("%.0f%%", confidence * 100);
+
+        // Search in database
+        DatabaseHelper.FoodItem food = dbHelper.searchFood(modelOutput);
+
+        if (food != null) {
+            recognizedFood = food.name;
+            resultText.setText("✅ " + food.name + "\n" +
+                    "Calories: " + food.calories + " cal\n" +
+                    "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                    confidenceText);
+            useFoodBtn.setVisibility(View.VISIBLE);
+            useFoodBtn.setText("📝 Use \"" + food.name + "\"");
+        } else {
+            recognizedFood = modelOutput;
+            resultText.setText("🔍 AI Recognized: " + modelOutput + "\n" +
+                    confidenceText + "\n" +
+                    "⚠️ Not in your database yet.");
+            useFoodBtn.setVisibility(View.GONE);
+        }
+
+        fixBtn.setVisibility(View.VISIBLE);
+        fixBtn.setText("✏️ Fix: This is actually...");
+        searchOnlineBtn.setVisibility(View.VISIBLE);
+        searchAiBtn.setVisibility(View.VISIBLE);
+    }
+
+    // ============================================================
+    // FIX DIALOG
+    // ============================================================
+    private void showFixDialog(final String modelOutput, final String currentGuess) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Correct Food Name");
+        builder.setMessage("What food is this actually?");
+
+        final EditText input = new EditText(this);
+        input.setHint("e.g., Pizza");
+        input.setText(currentGuess);
+        builder.setView(input);
+
+        builder.setPositiveButton("Save", (dialog, which) -> {
+            String userCorrection = input.getText().toString().trim();
+            if (!userCorrection.isEmpty()) {
+                dbHelper.saveCorrection(modelOutput, userCorrection);
+                recognizedFood = userCorrection;
+                resultText.setText("✅ Saved: " + userCorrection);
+                Toast.makeText(this, "Correction saved!", Toast.LENGTH_SHORT).show();
+
+                useFoodBtn.setVisibility(View.VISIBLE);
+                useFoodBtn.setText("📝 Use \"" + userCorrection + "\"");
+                useFoodBtn.setOnClickListener(v -> {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("FOOD_NAME", userCorrection);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                });
+            } else {
+                Toast.makeText(this, "No correction entered", Toast.LENGTH_SHORT).show();
+            }
+        });
+        builder.setNegativeButton("Cancel", null);
+        builder.show();
+    }
+
+    // ============================================================
+    // ACTIVITY RESULT
+    // ============================================================
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == CAMERA_REQUEST && resultCode == RESULT_OK) {
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            if (photo != null) {
+                capturedImage = photo;
+                photoPreview.setImageBitmap(photo);
+                // Show buttons after photo is taken
+
+                // Show the buttons
+                searchGoogleBtn.setVisibility(View.VISIBLE);
+                searchBingBtn.setVisibility(View.VISIBLE);
+                searchYandexBtn.setVisibility(View.VISIBLE);
+                //
+                resultText.setText("📸 Photo taken. Tap a search engine.");
+                searchOnlineBtn.setVisibility(View.VISIBLE);
+                searchAiBtn.setVisibility(View.VISIBLE);
+                //resultText.setText("📸 Photo taken. Tap Search Online or Search AI.");
+            }
+        } else if (requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
+            if (data != null) {
+                try {
+                    Bitmap photo = MediaStore.Images.Media.getBitmap(
+                            this.getContentResolver(), data.getData());
+                    if (photo != null) {
+                        capturedImage = photo;
+                        photoPreview.setImageBitmap(photo);
+                        searchOnlineBtn.setVisibility(View.VISIBLE);
+                        searchAiBtn.setVisibility(View.VISIBLE);
+                        // Show the buttons
+                        searchGoogleBtn.setVisibility(View.VISIBLE);
+                        searchBingBtn.setVisibility(View.VISIBLE);
+                        searchYandexBtn.setVisibility(View.VISIBLE);
+
+                        resultText.setText("📸 Photo selected. Tap Search Online or Search AI.");
+                    }
+                } catch (IOException e) {
+                    Toast.makeText(this, "Failed to load image", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
+    }//onActivityResult
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == CAMERA_PERMISSION_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                openCamera();
+            } else {
+                Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }//onRequestPermissionResult 26090305
+}

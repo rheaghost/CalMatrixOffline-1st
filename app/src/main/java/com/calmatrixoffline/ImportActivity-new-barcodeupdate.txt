@@ -1,0 +1,289 @@
+package com.calsnap1;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Bundle;
+import android.provider.OpenableColumns;
+import android.text.TextUtils;
+import android.util.Log;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AppCompatActivity;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class ImportActivity extends AppCompatActivity {
+    private static final int PICK_FILE_REQUEST = 100;
+    private static final int PICK_DIRECTORY_REQUEST = 101;
+
+    private TextView resultText, statusText;
+    private Button importFoodBtn, importExerciseBtn, importBarcodeBtn, importFolderBtn, backBtn;
+    private DatabaseHelper dbHelper;
+
+    // Store the current import type (foods, exercises, barcodes)
+    private String currentImportType = "";
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_import);
+
+        dbHelper = new DatabaseHelper(this);
+
+        resultText = findViewById(R.id.resultText);
+        statusText = findViewById(R.id.statusText);
+        importFoodBtn = findViewById(R.id.importFoodBtn);
+        importExerciseBtn = findViewById(R.id.importExerciseBtn);
+        importBarcodeBtn = findViewById(R.id.importBarcodeBtn);
+        importFolderBtn = findViewById(R.id.importFolderBtn);
+        backBtn = findViewById(R.id.backBtn);
+
+        // Set up button listeners
+        importFoodBtn.setOnClickListener(v -> {
+            currentImportType = "foods";
+            pickFile();
+        });
+
+        importExerciseBtn.setOnClickListener(v -> {
+            currentImportType = "exercises";
+            pickFile();
+        });
+
+        importBarcodeBtn.setOnClickListener(v -> {
+            currentImportType = "barcodes";
+            pickFile();
+        });
+
+        importFolderBtn.setOnClickListener(v -> {
+            pickFolder();
+        });
+
+        backBtn.setOnClickListener(v -> finish());
+
+        updateStatus();
+    }
+
+    private void pickFile() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+        intent.addCategory(Intent.CATEGORY_OPENABLE);
+        intent.setType("text/*");
+        intent.putExtra(Intent.EXTRA_MIME_TYPES, new String[]{"text/csv", "text/plain"});
+        startActivityForResult(intent, PICK_FILE_REQUEST);
+    }
+
+    private void pickFolder() {
+        Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT_TREE);
+        intent.putExtra(Intent.EXTRA_LOCAL_ONLY, true);
+        startActivityForResult(intent, PICK_DIRECTORY_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == PICK_DIRECTORY_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri treeUri = data.getData();
+                getContentResolver().takePersistableUriPermission(treeUri,
+                        Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+                DocumentFile pickedDir = DocumentFile.fromTreeUri(this, treeUri);
+                if (pickedDir != null) {
+                    scanFolder(pickedDir);
+                }
+            }
+            return;
+        }
+
+        if (requestCode == PICK_FILE_REQUEST && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.getData() != null) {
+                Uri uri = data.getData();
+                String fileName = getFileName(uri);
+                resultText.setText("📁 File: " + fileName);
+                processCSV(uri, currentImportType);
+            }
+        }
+    }
+
+    private void scanFolder(DocumentFile folder) {
+        int count = 0;
+        StringBuilder fileList = new StringBuilder();
+        fileList.append("📁 Found CSV files:\n\n");
+
+        for (DocumentFile file : folder.listFiles()) {
+            if (file.isFile() && file.getName() != null) {
+                String name = file.getName().toLowerCase();
+                if (name.endsWith(".csv") || name.endsWith(".txt")) {
+                    count++;
+                    fileList.append("• ").append(file.getName()).append("\n");
+                }
+            }
+        }
+
+        if (count == 0) {
+            fileList.append("No CSV files found in this folder.");
+        } else {
+            fileList.append("\nTotal: ").append(count).append(" file(s)");
+            resultText.setText("📁 Found " + count + " files");
+            Toast.makeText(this, "Found " + count + " CSV files", Toast.LENGTH_LONG).show();
+        }
+
+        statusText.setText(fileList.toString());
+    }
+
+    private String getFileName(Uri uri) {
+        String fileName = "unknown";
+        try (Cursor cursor = getContentResolver().query(uri, null, null, null, null)) {
+            if (cursor != null && cursor.moveToFirst()) {
+                int nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME);
+                if (nameIndex >= 0) {
+                    fileName = cursor.getString(nameIndex);
+                }
+            }
+        } catch (Exception e) {
+            fileName = uri.getPath();
+        }
+        return fileName;
+    }
+
+    // ============================================================
+    // UNIFIED CSV PROCESSOR
+    // ============================================================
+    private void processCSV(Uri uri, String importType) {
+        try {
+            InputStream is = getContentResolver().openInputStream(uri);
+            if (is == null) {
+                showError("Could not open file");
+                return;
+            }
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+
+            int count = 0;
+            int skipped = 0;
+            String line;
+            boolean firstLine = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (firstLine) {
+                    firstLine = false;
+                    // Skip header row
+                    continue;
+                }
+
+                if (line.trim().isEmpty()) {
+                    continue;
+                }
+
+                try {
+                    String[] parts = parseCSVLine(line);
+                    int actualLength = parts.length;
+                    Log.d("Import", "Row length: " + actualLength + " | Row: " + line);
+
+                    // Determine which type this row belongs to
+                    if (importType.equals("barcodes") && actualLength >= 7) {
+                        // Barcode format: barcode,name,calories,protein,carbs,fat,serving
+                        String barcode = parts[0].trim();
+                        String name = parts[1].trim();
+                        int calories = (int) Math.round(Double.parseDouble(parts[2].trim()));
+                        int protein = (int) Math.round(Double.parseDouble(parts[3].trim()));
+                        int carbs = (int) Math.round(Double.parseDouble(parts[4].trim()));
+                        int fat = (int) Math.round(Double.parseDouble(parts[5].trim()));
+                        String serving = parts[6].trim();
+                        // Insert into foods table (with barcode column)
+                        dbHelper.insertFood(name, calories, protein, carbs, fat, serving, barcode);
+                        count++;
+                    } else if (importType.equals("foods") && actualLength >= 6) {
+                        // Food format: name,calories,protein,carbs,fat,serving
+                        String name = parts[0].trim();
+                        int calories = (int) Math.round(Double.parseDouble(parts[1].trim()));
+                        int protein = (int) Math.round(Double.parseDouble(parts[2].trim()));
+                        int carbs = (int) Math.round(Double.parseDouble(parts[3].trim()));
+                        int fat = (int) Math.round(Double.parseDouble(parts[4].trim()));
+                        String serving = parts[5].trim();
+                        dbHelper.insertFood(name, calories, protein, carbs, fat, serving, "");
+                        count++;
+                    } else if (importType.equals("exercises") && actualLength >= 2) {
+                        // Exercise format: name,met
+                        String name = parts[0].trim();
+                        double met = Double.parseDouble(parts[1].trim());
+                        dbHelper.insertExercise(name, met);
+                        count++;
+                    } else {
+                        skipped++;
+                        Log.d("Import", "Skipped (wrong columns): " + line);
+                    }
+                } catch (NumberFormatException e) {
+                    skipped++;
+                    Log.d("Import", "Skipped (number format): " + line + " | Error: " + e.getMessage());
+                } catch (Exception e) {
+                    skipped++;
+                    Log.d("Import", "Skipped (error): " + line + " | Error: " + e.getMessage());
+                }
+            }
+            reader.close();
+
+            Log.d("Import", "✅ Imported: " + count + ", Skipped: " + skipped);
+
+            String typeLabel = importType.equals("foods") ? "foods" :
+                    importType.equals("exercises") ? "exercises" : "barcodes";
+            final int finalCount = count;
+            final int finalSkipped = skipped;
+            runOnUiThread(() -> {
+                resultText.setText("✅ Imported " + finalCount + " " + typeLabel);
+                statusText.setText("📊 Imported: " + finalCount + " | Skipped: " + finalSkipped);
+                Toast.makeText(this, "✅ " + finalCount + " " + typeLabel + " imported", Toast.LENGTH_LONG).show();
+                updateStatus();
+            });
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            runOnUiThread(() -> showError("Error: " + e.getMessage()));
+        }
+    }
+
+    // ============================================================
+    // CUSTOM CSV PARSER (handles quoted fields with commas)
+    // ============================================================
+    private String[] parseCSVLine(String line) {
+        List<String> result = new ArrayList<>();
+        boolean inQuotes = false;
+        StringBuilder current = new StringBuilder();
+
+        for (char c : line.toCharArray()) {
+            if (c == '"') {
+                inQuotes = !inQuotes;
+            } else if (c == ',' && !inQuotes) {
+                result.add(current.toString().trim());
+                current = new StringBuilder();
+            } else {
+                current.append(c);
+            }
+        }
+        result.add(current.toString().trim());
+        return result.toArray(new String[0]);
+    }
+
+    // ============================================================
+    // UPDATE STATUS
+    // ============================================================
+    private void updateStatus() {
+        int foodCount = dbHelper.getFoodCount();
+        int exerciseCount = dbHelper.getExerciseCount();
+        statusText.setText("📊 Foods: " + foodCount + " | Exercises: " + exerciseCount);
+    }
+
+    private void showError(String msg) {
+        resultText.setText("❌ " + msg);
+        statusText.setText("");
+        Toast.makeText(this, "❌ " + msg, Toast.LENGTH_SHORT).show();
+    }
+}

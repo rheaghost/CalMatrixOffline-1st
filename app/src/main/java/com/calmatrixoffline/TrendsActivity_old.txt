@@ -1,0 +1,80 @@
+package com.calsnap1;
+
+import android.os.Bundle;
+import android.widget.Button;
+import android.widget.TextView;
+import androidx.appcompat.app.AppCompatActivity;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
+public class TrendsActivity extends AppCompatActivity {
+    private SimpleChartView chartView;
+    private TextView budgetText, summaryText;
+    private Button backBtn;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_trends);
+
+        chartView = findViewById(R.id.chartView);
+        budgetText = findViewById(R.id.budgetText);
+        summaryText = findViewById(R.id.summaryText);
+        backBtn = findViewById(R.id.backBtn);
+
+        // chartView.setData(new ArrayList<>());2609091547
+
+        backBtn.setOnClickListener(v -> finish());
+
+        loadData();
+    }//ok 2609091608
+
+    private void loadData() {
+        DatabaseHelper db = new DatabaseHelper(this);
+        UserProfile profile = new UserProfile(this);
+
+        List<SimpleChartView.ChartData> data = new ArrayList<>();
+        Calendar cal = Calendar.getInstance();
+
+        int total = 0;
+        int count = 0;
+        int budget = profile.getDailyBudget();
+
+        for (int i = 6; i >= 0; i--) {
+            cal.setTime(Calendar.getInstance().getTime());
+            cal.add(Calendar.DAY_OF_MONTH, -i);
+            String date = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(cal.getTime());
+
+            int net = db.getDayTotalNetCalories(date);
+            total += net;
+            if (net != 0) count++;
+
+            String label = new SimpleDateFormat("E", Locale.getDefault()).format(cal.getTime());
+            data.add(new SimpleChartView.ChartData(label, net));
+        }
+
+        chartView.setData(data);
+
+        if (profile.hasProfile()) {
+            budgetText.setText("Daily Budget: " + budget + " cal/day");
+        } else {
+            budgetText.setText("Daily Budget: " + budget + " cal/day (default)");
+        }
+
+        if (count > 0) {
+            int avg = total / count;
+            summaryText.setText("7-Day Avg: " + avg + " cal/day");
+        } else {
+            summaryText.setText("No data yet. Log food and exercise!");
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadData();
+    }
+}
