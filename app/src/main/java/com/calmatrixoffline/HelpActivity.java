@@ -78,6 +78,11 @@ public class HelpActivity extends AppCompatActivity {
                         "• imgbb.com — only if you enter your own API key in Settings " +
                         "and use the online search feature\n\n" +
                         "If you do not use online search, no data leaves your device.\n\n" +
+                        "CHATGPT Food Nutritional Image  Search:\n"+
+                        "ChatGPT's anonymous tier allows a few image uploads per session. \n" +
+                        "If ChatGPT says 'image is invalid' or asks you to log in, create\n" +
+                        " a free account — no payment required. The ChatGPT flow in this app\n " +
+                        "works fully once logged in.\n\n"+
 
                         "📜 LICENSE\n\n" +
                         "Personal use only. Commercial use requires a written " +

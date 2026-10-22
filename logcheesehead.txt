@@ -1,0 +1,2 @@
+10-19 17:56:05.619 I/WhisperBridge(19148): whisper loaded
+10-19 17:57:16.670 I/WhisperBridge(19148): whisper_full rc=0 elapsed=66978 ms

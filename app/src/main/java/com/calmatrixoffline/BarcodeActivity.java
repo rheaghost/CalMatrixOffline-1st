@@ -22,7 +22,12 @@ import com.google.mlkit.vision.common.InputImage;
 
 import java.io.IOException;
 
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import androidx.appcompat.app.AlertDialog;
+
 public class BarcodeActivity extends AppCompatActivity {
+    private DatabaseHelper dbHelper;//2610120114
     private static final int CAMERA_PERMISSION_REQUEST = 101;
     private static final int CAMERA_REQUEST = 102;
 
@@ -44,6 +49,7 @@ public class BarcodeActivity extends AppCompatActivity {
         useBtn = findViewById(R.id.useBtn);
 
         scanner = BarcodeScanning.getClient();
+        dbHelper = new DatabaseHelper(this);//2610120117
 
         // ===== USE BUTTON: Send result back to MainActivity =====
         /*
@@ -148,10 +154,36 @@ public class BarcodeActivity extends AppCompatActivity {
 
                     resultText.setText("📱 Barcode: " + code + "\nSearching...");
 
+                    //BarcodeDatabase.BarcodeItem item = BarcodeDatabase.search(code);
+
+                    //
+                    // FIRST: check the foods table for user-added foods with this barcode
+                    DatabaseHelper.FoodItem foodHit = dbHelper.searchFoodByBarcode(code);
+                    if (foodHit != null) {
+                        lastScannedName = foodHit.name;
+                        lastScannedBarcode = code;
+                        resultText.setText("✅ " + foodHit.name + "\n" +
+                                "Calories: " + foodHit.calories + " cal\n" +
+                                "Protein: " + foodHit.protein + "g | Carbs: " + foodHit.carbs + "g | Fat: " + foodHit.fat + "g\n" +
+                                "Serving: " + foodHit.serving);
+                        useBtn.setVisibility(android.view.View.VISIBLE);
+                        useBtn.setText("📝 Use \"" + foodHit.name + "\"");
+                        Toast.makeText(this, "✅ Found: " + foodHit.name, Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
+                  // FALLBACK: legacy barcodes table (old CSV data)
                     BarcodeDatabase.BarcodeItem item = BarcodeDatabase.search(code);
+
+                    //
+
+
                     if (item != null) {
                         lastScannedName = item.name;
                         lastScannedBarcode = code;
+
+
+
 
                         resultText.setText("✅ " + item.name + "\n" +
                                 "Calories: " + item.calories + " cal\n" +
@@ -168,7 +200,19 @@ public class BarcodeActivity extends AppCompatActivity {
                         lastScannedBarcode = "";
                         useBtn.setVisibility(android.view.View.GONE);
                         resultText.setText("❌ Product not in local database.\nBarcode: " + code);
-                        Toast.makeText(this, "Product not found", Toast.LENGTH_SHORT).show();
+                        //Toast.makeText(this, "Product not found", Toast.LENGTH_SHORT).show();
+
+                        //
+                        final String scannedCode = code;
+                        new AlertDialog.Builder(this)
+                                .setTitle("Product not found")
+                                .setMessage("Barcode " + scannedCode + " is not in your database.\n\nAdd it as a new food?")
+                                .setPositiveButton("Add", (d, w) -> showAddFoodWithBarcodeDialog(scannedCode))
+                                .setNegativeButton("Cancel", null)
+                                .show();
+
+
+                        //
                     }
                 })
                 .addOnFailureListener(e -> {
@@ -188,5 +232,73 @@ public class BarcodeActivity extends AppCompatActivity {
                 Toast.makeText(this, "Camera permission denied", Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+    private void showAddFoodWithBarcodeDialog(String barcode) {//step 4 edit 4 2610120524
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 24, 48, 24);
+
+        final EditText nameInput = new EditText(this);
+        nameInput.setHint("Name");
+        layout.addView(nameInput);
+
+        final EditText calInput = new EditText(this);
+        calInput.setHint("Calories");
+        calInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(calInput);
+
+        final EditText proInput = new EditText(this);
+        proInput.setHint("Protein (g)");
+        proInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(proInput);
+
+        final EditText carbInput = new EditText(this);
+        carbInput.setHint("Carbs (g)");
+        carbInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(carbInput);
+
+        final EditText fatInput = new EditText(this);
+        fatInput.setHint("Fat (g)");
+        fatInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(fatInput);
+
+        final EditText servingInput = new EditText(this);
+        servingInput.setHint("Serving (e.g. 100g)");
+        layout.addView(servingInput);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Add food (barcode " + barcode + ")")
+                .setView(layout)
+                .setPositiveButton("Save", (d, w) -> {
+                    String name = nameInput.getText().toString().trim();
+                    if (name.isEmpty()) {
+                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int cal, pro, carb, fat;
+                    try {
+                        cal  = Integer.parseInt(calInput.getText().toString().trim());
+                        pro  = Integer.parseInt(proInput.getText().toString().trim());
+                        carb = Integer.parseInt(carbInput.getText().toString().trim());
+                        fat  = Integer.parseInt(fatInput.getText().toString().trim());
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Enter valid numbers", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String serving = servingInput.getText().toString().trim();
+                    if (serving.isEmpty()) serving = "1 serving";
+
+                    dbHelper.insertUserFood(name, cal, pro, carb, fat, serving, barcode);
+                    Toast.makeText(this, "✅ Added: " + name, Toast.LENGTH_SHORT).show();
+
+                    // Send back to MainActivity with the new food name
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("FOOD_NAME", name);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
     }
 }

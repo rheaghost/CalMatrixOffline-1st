@@ -1,0 +1,82 @@
+10-19 17:57:16.670 I/WhisperBridge(19148): whisper_full rc=0 elapsed=66978 ms
+10-19 17:58:48.525 I/WhisperBridge(19148): whisper loaded
+10-19 17:59:49.232 I/WhisperBridge(19148): whisper_full rc=0 elapsed=56589 ms
+10-19 17:59:49.232 I/WhisperBridge(19148): transcribePcm: n=39680 threads=4 lang=en
+
+10-19 17:56:05.619 I/WhisperBridge(19148): whisper loaded
+0-19 17:59:49.232 I/WhisperBridge(19148): whisper_full rc=0 elapsed=56589 ms
+10-19 17:59:49.232 I/WhisperBridge(19148): transcribePcm: n=39680 threads=4 lang=en
+10-19 17:56:05.619 I/WhisperBridge(19148): whisper loaded
+
+10-19 17:57:16.670 I/WhisperBridge(19148): whisper_full rc=0 elapsed=66978 ms
+
+10-19 17:57:16.670 I/WhisperBridge(19148): transcribePcm: n=32640 threads=4 lang=en
+10-19 17:58:48.525 I/WhisperBridge(19148): whisper loaded
+10-19 17:59:49.232 I/WhisperBridge(19148): whisper_full rc=0 elapsed=56589 ms
+10-19 17:59:49.232 I/WhisperBridge(19148): transcribePcm: n=39680 threads=4 lang=en
+0-19 17:56:05.619 I/WhisperBridge(19148): whisper loaded
+10-19 17:57:16.670 I/WhisperBridge(19148): whisper_full rc=0 elapsed=66978 ms
+10-19 17:57:16.670 I/WhisperBridge(19148): transcribePcm: n=32640 threads=4 lang=en
+10-19 17:58:48.525 I/WhisperBridge(19148): whisper loaded
+10-19 17:59:49.232 I/WhisperBridge(19148): whisper_full rc=0 elapsed=56589 ms
+10-19 17:59:49.232 I/WhisperBridge(19148): transcribePcm: n=39680 threads=4 lang=en
+
+10-19 17:59:49.233 D/VoiceActivity(19148): transcribePcm returned in 56590ms:  Cheeseburger!
+10-19 17:59:49.235 D/VoiceActivity(19148): searchAndReturn:  Cheeseburger!
+10-19 17:59:49.235 D/VoiceActivity(19148): cleaned search: [cheeseburger]
+10-19 17:59:49.236 D/VoiceActivity(19148): found food: Chicken Nuggets
+10-19 17:59:49.245 I/VSyncReactor( 1132): Current= 60, TransitioningTo= 60, hwcPeriod= 60, Distance= 0
+10-19 17:59:50.030 I/bauth_FPBAuthService( 1427): pcf : 0x1012, 0 ,3 ,0 ,0 ,0 ,0, 7.0.0.0
+10-19 17:56:05.619 I/WhisperBridge(19148): whisper loaded
+10-19 17:56:05.619 D/VoiceActivity(19148): loadWhisperModel result=true
+10-19 17:57:16.670 I/WhisperBridge(19148): whisper_full rc=0 elapsed=66978 ms
+10-19 17:57:16.670 I/WhisperBridge(19148): transcribePcm: n=32640 threads=4 lang=en10-19 17:57:16.671 D/VoiceActivity(19148): transcribePcm returned in 66979ms:  Cheeseburger
+10-19 17:57:16.673 D/VoiceActivity(19148): searchAndReturn:  Cheeseburger
+10-19 17:57:16.673 D/VoiceActivity(19148): cleaned search: [cheeseburger]
+10-19 17:57:16.673 D/VoiceActivity(19148): found food: Chicken Nuggets
+10-19 17:57:16.684 E/SemIWCMonitor( 1264): poor link count is 21
+10-19 17:57:16.684 E/SemIWCMonitor( 1264): [POOR_LINK_DETECTED] 20 -> 21
+10-19 17:57:16.685 E/SemIWCMonitor.File( 1264): List of Known APs: Cand: [ <67:01;3;4077922029>  <9e:bb;9;2106649100>  <97:03;2;1314541052>  <53:60;180;4451862122>  <cf:c2;0;435117333>  <fc:d0;6;3538868791>  <97:02;2;1311758226>  <4b:72;0;435276351>  <1c:b6;33;3047870650>  <5c:12;0;435246799>  <0c:a3;2;289732363> ], Core: [], Prob: []
+10-19 17:57:16.685 E/SemIWCMonitor.File( 1264): Q-Table Action Taken: Q-Table: [ 0.146687 0.000000 0.000000; 0.238479 0.000000 0.000000; 4.931113 0.000000 0.000000; ] >> Action Taken: 0, New State: 2
+10-19 17:57:16.687 I/VSyncReactor( 1132): Current= 60, TransitioningTo= 60, hwcPeriod= 60, Distance= 0
+10-19 17:58:48.525 I/WhisperBridge(19148): whisper loaded
+10-19 17:59:49.232 I/WhisperBridge(19148): whisper_full rc=0 elapsed=56589 ms
+10-19 17:59:49.232 I/WhisperBridge(19148): transcribePcm: n=39680 threads=4 lang=en
+10-19 17:59:49.233 D/VoiceActivity(19148): transcribePcm returned in 56590ms:  Cheeseburger!
+10-19 17:59:49.235 D/VoiceActivity(19148): searchAndReturn:  Cheeseburger!
+10-19 17:59:49.235 D/VoiceActivity(19148): cleaned search: [cheeseburger]
+10-19 17:59:49.236 D/VoiceActivity(19148): found food: Chicken Nuggets
+10-19 17:59:49.245 I/VSyncReactor( 1132): Current= 60, TransitioningTo= 60, hwcPeriod= 60, Distance= 0
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

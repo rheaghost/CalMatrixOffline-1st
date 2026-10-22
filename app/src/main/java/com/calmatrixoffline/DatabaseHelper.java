@@ -24,7 +24,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     //private static final int DATABASE_VERSION = 7; // or whatever your current version is + 1 because of meal macros table conflict 2609060851
     //private static final int DATABASE_VERSION = 8; //food image columns added 2609110202
     //private static final int DATABASE_VERSION = 9;//add servings column for recipe 2609151649
-    private static final int DATABASE_VERSION = 10;//export user made content to csv 2609151959
+    //private static final int DATABASE_VERSION = 10;//export user made content to csv 2609151959
+    private static final int DATABASE_VERSION = 11;//for proper handling of user supplied food data 2610111130
 
     private static final String COLUMN_MACRO_SERVINGS = "servings"; //1609151649
 
@@ -45,6 +46,8 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_FOOD_CALORIES = "food_calories";
 
     private static final String COLUMN_FOOD_IS_USER = "is_user_added";//2609152115
+
+    private static final String COLUMN_FOOD_IS_EDITABLE = "is_editable";//2610111132
     private static final String COLUMN_EXERCISE_NAME = "exercise_name";
     private static final String COLUMN_EXERCISE_CALORIES = "exercise_calories";
     private static final String COLUMN_NET_CALORIES = "net_calories";
@@ -180,8 +183,10 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_FOOD_SERVING + " TEXT,"
                 + COLUMN_FOOD_BARCODE + " TEXT,"
                 + COLUMN_FOOD_IMAGE + " TEXT,"
-                + COLUMN_FOOD_IS_USER + " INTEGER DEFAULT 0"
+                + COLUMN_FOOD_IS_USER + " INTEGER DEFAULT 0,"
+                + COLUMN_FOOD_IS_EDITABLE + " INTEGER DEFAULT 0"
                 + ")";
+
         db.execSQL(createFoodsTable);
 
         // Add to onCreate()
@@ -294,6 +299,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         " ADD COLUMN " + COLUMN_FOOD_IS_USER + " INTEGER DEFAULT 0");
             } catch (Exception e) { }
         }
+
+        if (oldVersion < 11) {
+            try {
+                db.execSQL("ALTER TABLE " + TABLE_FOODS +
+                        " ADD COLUMN " + COLUMN_FOOD_IS_EDITABLE + " INTEGER DEFAULT 0");
+            } catch (Exception e) { }
+        }//2610111141 proper handling of user supplied data
+
 
 
 
@@ -719,6 +732,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         values.put(COLUMN_FOOD_SERVING, serving);
         values.put(COLUMN_FOOD_BARCODE, barcode != null ? barcode : "");
         values.put(COLUMN_FOOD_IS_USER, 1);
+        values.put(COLUMN_FOOD_IS_EDITABLE, 1);  //2610111660
         db.insert(TABLE_FOODS, null, values);
     }//2609152123
 
@@ -814,7 +828,34 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.insert(TABLE_FOODS, null, values);
     }
 
-    public FoodItem searchFood(String query) {
+
+    public FoodItem searchFood(String query) {//cprrect 8 args 2610112021
+        SQLiteDatabase db = this.getReadableDatabase();
+        String q = query.toLowerCase().trim();
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_FOODS + " WHERE LOWER(" + COLUMN_FOOD_NAME + ") LIKE ?", new String[]{"%" + q + "%"});
+        FoodItem result = null;
+        if (cursor.moveToFirst()) {
+            int userIdx = cursor.getColumnIndex(COLUMN_FOOD_IS_USER);
+            int editIdx = cursor.getColumnIndex(COLUMN_FOOD_IS_EDITABLE);
+            boolean isUser     = userIdx >= 0 && cursor.getInt(userIdx) == 1;
+            boolean isEditable = editIdx >= 0 && cursor.getInt(editIdx) == 1;
+
+            result = new FoodItem(
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_NAME)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_CALORIES)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_PROTEIN)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_CARBS)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_FAT)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_SERVING)),
+                    isUser,
+                    isEditable
+            );
+        }
+        cursor.close();
+        return result;
+    }
+    public FoodItem searchFood_fail(String query) {//incorrect 6 arg constructor 2610112021
         SQLiteDatabase db = this.getReadableDatabase();
         String q = query.toLowerCase().trim();
 
@@ -833,9 +874,25 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         cursor.close();
         return result;
-    }
+    }//end searchFood 2610111512
 
-    public FoodItem searchFoodByBarcode(String barcode) {
+    //replace 2610111512
+    public boolean updateUserFood(String originalName, String newName, int calories,
+                                  int protein, int carbs, int fat, String serving) {
+        SQLiteDatabase db = this.getWritableDatabase();
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_FOOD_NAME, newName);
+        values.put(COLUMN_FOOD_CALORIES, calories);
+        values.put(COLUMN_FOOD_PROTEIN, protein);
+        values.put(COLUMN_FOOD_CARBS, carbs);
+        values.put(COLUMN_FOOD_FAT, fat);
+        values.put(COLUMN_FOOD_SERVING, serving);
+        int rows = db.update(TABLE_FOODS, values,
+                COLUMN_FOOD_NAME + " = ?", new String[]{originalName});
+        return rows > 0;
+    }//end updateuserfood 2610111512
+
+    public FoodItem searchFoodByBarcode_old_6arg(String barcode) {//isEditable = false for foods found by barcode — so no Edit button appears on them. 2610121446
         SQLiteDatabase db = this.getReadableDatabase();
         if (barcode == null || barcode.isEmpty()) return null;
 
@@ -855,6 +912,36 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return result;
     }
 
+    //2610121447 8args version
+    public FoodItem searchFoodByBarcode(String barcode) {
+        SQLiteDatabase db = this.getReadableDatabase();
+        if (barcode == null || barcode.isEmpty()) return null;
+
+        Cursor cursor = db.rawQuery("SELECT * FROM " + TABLE_FOODS + " WHERE " + COLUMN_FOOD_BARCODE + " = ?", new String[]{barcode});
+        FoodItem result = null;
+        if (cursor.moveToFirst()) {
+            int userIdx = cursor.getColumnIndex(COLUMN_FOOD_IS_USER);
+            int editIdx = cursor.getColumnIndex(COLUMN_FOOD_IS_EDITABLE);
+            boolean isUser     = userIdx >= 0 && cursor.getInt(userIdx) == 1;
+            boolean isEditable = editIdx >= 0 && cursor.getInt(editIdx) == 1;
+
+            result = new FoodItem(
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_NAME)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_CALORIES)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_PROTEIN)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_CARBS)),
+                    cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_FOOD_FAT)),
+                    cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_FOOD_SERVING)),
+                    isUser,
+                    isEditable
+            );
+        }
+        cursor.close();
+        return result;
+    }
+
+
+
     public int getFoodCount() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("SELECT COUNT(*) FROM " + TABLE_FOODS, null);
@@ -870,7 +957,38 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     // FoodItem class (already exists in FoodDatabase, but we need this for compatibility)
+    //new 26100111509
     public static class FoodItem {
+        public String name;
+        public int calories;
+        public int protein;
+        public int carbs;
+        public int fat;
+        public String serving;
+        public boolean isUserAdded;
+        public boolean isEditable;
+
+        // Existing 6-arg constructor — kept so nothing else breaks
+        public FoodItem(String name, int calories, int protein, int carbs, int fat, String serving) {
+            this(name, calories, protein, carbs, fat, serving, false, false);
+        }
+
+        // New 8-arg constructor
+        public FoodItem(String name, int calories, int protein, int carbs, int fat, String serving,
+                        boolean isUserAdded, boolean isEditable) {
+            this.name = name;
+            this.calories = calories;
+            this.protein = protein;
+            this.carbs = carbs;
+            this.fat = fat;
+            this.serving = serving;
+            this.isUserAdded = isUserAdded;
+            this.isEditable = isEditable;
+        }
+    }//end class FoodItem
+
+    /*
+    public static class FoodItem_old {//replaced 2610111509
         public String name;
         public int calories;
         public int protein;
@@ -886,7 +1004,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             this.fat = fat;
             this.serving = serving;
         }
-    }
+    }*/
 
 
 
@@ -1135,7 +1253,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-            macros.add(new MealMacro(name, items));
+            //macros.add(new MealMacro(name, items));//2610091922 bug servings is saved to the DB but not loaded back. So any recipe with servings > 1 shows as "× 1" when you reopen the app
+            MealMacro macro = new MealMacro(name, items);
+            macro.servings = cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_MACRO_SERVINGS));
+            macros.add(macro);//fepair 2610091923
+
         }
         cursor.close();
         return macros;
@@ -1179,6 +1301,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         cursor.close();
         return path;
     }//2609110633
+
+    public void fixExistingUserFoodsEditable() {//2610111611 make the old ones like gahanchocolate editable
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("UPDATE " + TABLE_FOODS + " SET " + COLUMN_FOOD_IS_EDITABLE + " = 1 WHERE " + COLUMN_FOOD_IS_USER + " = 1");
+    }
 
 
 

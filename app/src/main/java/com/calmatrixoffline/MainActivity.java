@@ -15,6 +15,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.LinearLayout;
 
+
+
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -63,6 +66,11 @@ public class MainActivity extends AppCompatActivity {
     private LinearLayout imageActionRow;
     private String currentFoodNameForImage = "";
 
+    //2610111525 for correct user food add
+    private Button editFoodBtn;
+    private DatabaseHelper.FoodItem currentUserFood;
+    //end user food add
+
     private static final int CAMERA_REQUEST_CODE = 400;
 
     //2609040202
@@ -107,6 +115,16 @@ public class MainActivity extends AppCompatActivity {
         budgetDisplay = findViewById(R.id.budgetDisplay);
         historyRecyclerView = findViewById(R.id.historyRecyclerView);
         foodImage = findViewById(R.id.foodImage); //food image 2609110624
+
+        //2610111529 5b user food add related
+        editFoodBtn = findViewById(R.id.editFoodBtn);
+        editFoodBtn.setVisibility(View.GONE);
+        editFoodBtn.setOnClickListener(v -> {
+            if (currentUserFood != null && currentUserFood.isEditable) {
+                showEditUserFoodDialog(currentUserFood);
+            }
+        });
+        //end 2610111529
 
 
         // ... other view initialization ...
@@ -434,6 +452,48 @@ public class MainActivity extends AppCompatActivity {
         Button dataBtn = findViewById(R.id.dataBtn);
         dataBtn.setOnClickListener(v -> showDataDialog());
 
+        //dbHelper.fixExistingUserFoodsEditable();//fix the old ones to make editable 2610111615
+
+        //whosper test 2610181330
+        /*
+        try {
+            boolean loaded = WhisperBridge.isModelLoaded();
+            Toast.makeText(this,
+                    "Whisper native OK (model loaded: " + loaded + ")",
+                    Toast.LENGTH_LONG).show();
+        } catch (UnsatisfiedLinkError e) {
+            Toast.makeText(this,
+                    "Whisper native FAILED: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+            android.util.Log.e("WhisperTest", "UnsatisfiedLinkError", e);
+        }
+
+         */
+        //end test
+
+
+
+        //new test 2610181456
+        new Thread(() -> {
+            java.io.File model = ensureModelInstalled();
+            if (model == null) {
+                runOnUiThread(() -> Toast.makeText(this,
+                        "Model install failed (check assets/models/ggml-base.bin)",
+                        Toast.LENGTH_LONG).show());
+                return;
+            }
+
+            long t0 = System.currentTimeMillis();
+            boolean loaded = WhisperBridge.loadWhisperModel(model.getAbsolutePath());
+            long elapsed = System.currentTimeMillis() - t0;
+
+            final boolean ok = loaded;
+            final long ms = elapsed;
+            runOnUiThread(() -> Toast.makeText(this,
+                    "Model load: " + ok + " (" + ms + " ms)",
+                    Toast.LENGTH_LONG).show());
+        }).start();
+
     }//onCreate
 
     // ============================================================
@@ -485,17 +545,45 @@ public class MainActivity extends AppCompatActivity {
             currentFoodNameForImage = food.name;
             imageActionRow.setVisibility(View.VISIBLE);
 
+            // Show Edit button only for editable user foods 2610111533  5c
+            currentUserFood = food.isEditable ? food : null;
+            editFoodBtn.setVisibility(food.isEditable ? View.VISIBLE : View.GONE);
+            //end 26101111533
+
             updateUI();
             Toast.makeText(this, "✅ Found: " + food.name, Toast.LENGTH_SHORT).show();
         } else {
+            //
             resultFood.setText("❌ No food found for: " + query);
             currentFoodCalories = 0;
             currentFoodName = "";
             foodImage.setVisibility(View.GONE);
             //failure button
             imageActionRow.setVisibility(View.GONE);
+
+            //2610111535
+            currentUserFood = null;
+            editFoodBtn.setVisibility(View.GONE);
+
+
+
+            //end 26101111535
             updateUI();
+            //
+            final String q = query;
+            new AlertDialog.Builder(this)
+                    .setTitle("Food not found")
+                    .setMessage("Add \"" + q + "\" as a new food?")
+                    .setPositiveButton("Add", (d, w) -> showAddFoodDialog(q))
+                    .setNegativeButton("Cancel", null)
+                    .show();
+
+
+
+
         }
+
+
     }
 
     private void loadFoodImage(String foodName) {
@@ -952,7 +1040,8 @@ public class MainActivity extends AppCompatActivity {
                 .setTitle(meal.name)
                 .setMessage(sb.toString())
                 .setPositiveButton("Log", (d, w) -> logMealMacro(meal))
-                .setNeutralButton("Delete", (d, w) -> confirmDeleteMeal(meal))
+                //.setNeutralButton("Delete", (d, w) -> confirmDeleteMeal(meal))//
+                .setNeutralButton("Edit", (d, w) -> showEditMealDialog(meal)) //2610091931 Delete now lives inside the Edit dialog instead (below).
                 .setNegativeButton("Close", null)
                 .show();
     }
@@ -1161,7 +1250,8 @@ public class MainActivity extends AppCompatActivity {
         }
 
         else if (requestCode == VOICE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
-            String food = data.getStringExtra("recognized_food");
+            //String food = data.getStringExtra("recognized_food");
+            String food = data.getStringExtra("FOOD_NAME");
             if (food != null) {
                 android.widget.AutoCompleteTextView input = findViewById(R.id.foodInput);
                 input.setText(food);
@@ -1687,6 +1777,225 @@ public class MainActivity extends AppCompatActivity {
         share.putExtra(Intent.EXTRA_TEXT, header + csv + footer);
         startActivity(Intent.createChooser(share, "Share via"));
     }
+
+    private void showEditMealDialog(final MealMacro meal) {//2610091931
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 24, 48, 24);
+
+        final EditText nameInput = new EditText(this);
+        nameInput.setHint("Meal name");
+        nameInput.setText(meal.name);
+        layout.addView(nameInput);
+
+        final EditText servingsInput = new EditText(this);
+        servingsInput.setHint("Servings in batch");
+        servingsInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        servingsInput.setText(String.valueOf(meal.servings));
+        layout.addView(servingsInput);
+
+        TextView itemsView = new TextView(this);
+        itemsView.setPadding(0, 24, 0, 0);
+        StringBuilder sb = new StringBuilder("Items (" + meal.items.size() + "):\n");
+        for (MealItem item : meal.items) {
+            sb.append("• ").append(item.foodName)
+                    .append(" — ").append(item.calories).append(" cal\n");
+        }
+        sb.append("\n(Item editing coming in v1.2)");
+        itemsView.setText(sb.toString());
+        layout.addView(itemsView);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Edit meal")
+                .setView(layout)
+                .setPositiveButton("Save", (d, w) -> {
+                    String newName = nameInput.getText().toString().trim();
+                    if (newName.isEmpty()) {
+                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int newServings;
+                    try {
+                        newServings = Integer.parseInt(servingsInput.getText().toString().trim());
+                        if (newServings < 1) newServings = 1;
+                    } catch (Exception e) {
+                        newServings = 1;
+                    }
+
+                    MealMacro updated = new MealMacro(newName, meal.items);
+                    updated.servings = newServings;
+
+                    // saveMealMacro uses INSERT (not REPLACE), so delete the old row first
+                    dbHelper.deleteMealMacro(meal.name);
+                    dbHelper.saveMealMacro(updated);
+
+                    Toast.makeText(this, "✅ Updated: " + newName + " (" + newServings + " servings)", Toast.LENGTH_SHORT).show();
+                })
+                .setNeutralButton("Delete", (d, w) -> confirmDeleteMeal(meal))
+                .setNegativeButton("Cancel", null)
+                .show();
+    }
+
+    //6. added 2610111539
+    private void showEditUserFoodDialog(final DatabaseHelper.FoodItem food) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 24, 48, 24);
+
+        final EditText nameInput = new EditText(this);
+        nameInput.setHint("Name");
+        nameInput.setText(food.name);
+        layout.addView(nameInput);
+
+        final EditText calInput = new EditText(this);
+        calInput.setHint("Calories");
+        calInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        calInput.setText(String.valueOf(food.calories));
+        layout.addView(calInput);
+
+        final EditText proInput = new EditText(this);
+        proInput.setHint("Protein (g)");
+        proInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        proInput.setText(String.valueOf(food.protein));
+        layout.addView(proInput);
+
+        final EditText carbInput = new EditText(this);
+        carbInput.setHint("Carbs (g)");
+        carbInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        carbInput.setText(String.valueOf(food.carbs));
+        layout.addView(carbInput);
+
+        final EditText fatInput = new EditText(this);
+        fatInput.setHint("Fat (g)");
+        fatInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        fatInput.setText(String.valueOf(food.fat));
+        layout.addView(fatInput);
+
+        final EditText servingInput = new EditText(this);
+        servingInput.setHint("Serving");
+        servingInput.setText(food.serving);
+        layout.addView(servingInput);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Edit food")
+                .setView(layout)
+                .setPositiveButton("Save", (d, w) -> {
+                    String newName = nameInput.getText().toString().trim();
+                    if (newName.isEmpty()) {
+                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int cal, pro, carb, fat;
+                    try {
+                        cal  = Integer.parseInt(calInput.getText().toString().trim());
+                        pro  = Integer.parseInt(proInput.getText().toString().trim());
+                        carb = Integer.parseInt(carbInput.getText().toString().trim());
+                        fat  = Integer.parseInt(fatInput.getText().toString().trim());
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Enter valid numbers", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String serving = servingInput.getText().toString().trim();
+                    if (serving.isEmpty()) serving = "1 serving";
+
+                    boolean ok = dbHelper.updateUserFood(food.name, newName, cal, pro, carb, fat, serving);
+                    if (ok) {
+                        Toast.makeText(this, "✅ Updated: " + newName, Toast.LENGTH_SHORT).show();
+                        searchFoodByName(newName);
+                    } else {
+                        Toast.makeText(this, "Update failed", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }//end showEditUserFoodDialog 2610111540
+
+
+
+    //coordination consistency  of add food procedyre 2610112211
+    private void showAddFoodDialog(String prefillName) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(48, 24, 48, 24);
+
+        final EditText nameInput = new EditText(this);
+        nameInput.setHint("Name");
+        nameInput.setText(prefillName);
+        layout.addView(nameInput);
+
+        final EditText calInput = new EditText(this);
+        calInput.setHint("Calories");
+        calInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(calInput);
+
+        final EditText proInput = new EditText(this);
+        proInput.setHint("Protein (g)");
+        proInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(proInput);
+
+        final EditText carbInput = new EditText(this);
+        carbInput.setHint("Carbs (g)");
+        carbInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(carbInput);
+
+        final EditText fatInput = new EditText(this);
+        fatInput.setHint("Fat (g)");
+        fatInput.setInputType(android.text.InputType.TYPE_CLASS_NUMBER);
+        layout.addView(fatInput);
+
+        final EditText servingInput = new EditText(this);
+        servingInput.setHint("Serving (e.g. 1 cup)");
+        layout.addView(servingInput);
+
+        new AlertDialog.Builder(this)
+                .setTitle("Add new food")
+                .setView(layout)
+                .setPositiveButton("Save", (d, w) -> {
+                    String name = nameInput.getText().toString().trim();
+                    if (name.isEmpty()) {
+                        Toast.makeText(this, "Name cannot be empty", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    int cal, pro, carb, fat;
+                    try {
+                        cal  = Integer.parseInt(calInput.getText().toString().trim());
+                        pro  = Integer.parseInt(proInput.getText().toString().trim());
+                        carb = Integer.parseInt(carbInput.getText().toString().trim());
+                        fat  = Integer.parseInt(fatInput.getText().toString().trim());
+                    } catch (Exception e) {
+                        Toast.makeText(this, "Enter valid numbers", Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+                    String serving = servingInput.getText().toString().trim();
+                    if (serving.isEmpty()) serving = "1 serving";
+
+                    dbHelper.insertUserFood(name, cal, pro, carb, fat, serving, "");
+                    Toast.makeText(this, "✅ Added: " + name, Toast.LENGTH_SHORT).show();
+                    searchFoodByName(name);
+                })
+                .setNegativeButton("Cancel", null)
+                .show();
+    }//end showadddialog
+
+    private java.io.File ensureModelInstalled() {//2610181454
+        java.io.File model = new java.io.File(getFilesDir(), "ggml-base.bin");
+        if (model.exists()) return model;
+
+        try {
+            java.io.InputStream is = getAssets().open("models/ggml-base.bin");
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(model);
+            byte[] buf = new byte[8192];
+            int n;
+            while ((n = is.read(buf)) > 0) fos.write(buf, 0, n);
+            is.close();
+            fos.close();
+        } catch (Exception e) {
+            android.util.Log.e("WhisperTest", "copy failed", e);
+            return null;
+        }
+        return model;
+    }
+
     // ============================================================
     // ON RESUME
     // ============================================================

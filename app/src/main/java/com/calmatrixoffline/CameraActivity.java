@@ -37,6 +37,9 @@ import okhttp3.Response;
 
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileOutputStream;//2610111728
+
 public class CameraActivity extends AppCompatActivity {
     private static final boolean ENABLE_BING_YANDEX = false; // set to true to enable
     private static final int CAMERA_REQUEST = 100;
@@ -74,6 +77,8 @@ public class CameraActivity extends AppCompatActivity {
     //private Button manualEntryBtn;
     private LinearLayout manualEntryRow;
 
+    private Button searchChatGptBtn;//search image onchatgpt for nutritional values 2610072023
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -97,6 +102,9 @@ public class CameraActivity extends AppCompatActivity {
         webView = findViewById(R.id.webView);//ok
         foodNameInput = findViewById(R.id.foodNameInput);
         confirmFoodBtn = findViewById(R.id.confirmFoodBtn);//ok 1829
+
+        searchChatGptBtn = findViewById(R.id.searchChatGptBtn);//2610122024
+        searchChatGptBtn.setOnClickListener(v -> askChatGpt());
 
         if (!ENABLE_BING_YANDEX) {
             searchBingBtn.setVisibility(View.GONE);
@@ -519,6 +527,7 @@ public class CameraActivity extends AppCompatActivity {
                 photoPreview.setImageBitmap(photo);
                 // Show all search buttons
                 searchAiBtn.setVisibility(View.VISIBLE);
+                searchChatGptBtn.setVisibility(View.VISIBLE);//2610172026
                 searchGoogleBtn.setVisibility(View.VISIBLE);
                 searchBingBtn.setVisibility(View.VISIBLE);
                 searchYandexBtn.setVisibility(View.VISIBLE);
@@ -533,6 +542,7 @@ public class CameraActivity extends AppCompatActivity {
                         capturedImage = photo;
                         photoPreview.setImageBitmap(photo);
                         searchAiBtn.setVisibility(View.VISIBLE);
+                        searchChatGptBtn.setVisibility(View.VISIBLE);//26101720266
                         searchGoogleBtn.setVisibility(View.VISIBLE);
                         searchBingBtn.setVisibility(View.VISIBLE);
                         searchYandexBtn.setVisibility(View.VISIBLE);
@@ -864,6 +874,12 @@ public class CameraActivity extends AppCompatActivity {
 
                         dbHelper.insertUserFood(foodName, calories, protein, carbs, fat, serving, "");
 
+                        // Save the photo if the user took one, using the same filename convention as MainActivity
+                        if (capturedImage != null) {
+                            saveBitmapForFood(capturedImage, foodName);
+                        }//2610112008
+
+
                         Toast.makeText(this, "✅ Added: " + foodName, Toast.LENGTH_SHORT).show();
                         Intent resultIntent = new Intent();
                         resultIntent.putExtra("FOOD_NAME", foodName);
@@ -918,4 +934,181 @@ public class CameraActivity extends AppCompatActivity {
     }
 
      */
+
+    //2610112005 was omitted then as the use button problem broke the entire project
+    private void saveBitmapForFood(Bitmap bitmap, String foodName) {
+        try {
+            String filename = foodName.toLowerCase().replace(" ", "_") + ".jpg";
+            String folder = BackupHelper.getImagesFolder();
+            File destFile = new File(folder, filename);
+
+            File parent = destFile.getParentFile();
+            if (parent != null && !parent.exists()) parent.mkdirs();
+
+            FileOutputStream os = new FileOutputStream(destFile);
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 85, os);
+            os.close();
+
+            dbHelper.updateFoodImagePath(foodName, filename);
+            android.util.Log.d("CameraImageSave", "Saved: " + destFile.getAbsolutePath());
+        } catch (Exception e) {
+            android.util.Log.e("CameraImageSave", "Failed: " + e.getMessage());
+            Toast.makeText(this, "Photo save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //2610172027
+    private static final String CHATGPT_PROMPT =
+            "What is the nutritional data for this food? " +
+                    "Please reply in this exact format, one per line:\n" +
+                    "Calories: <number>\n" +
+                    "Protein: <number>g\n" +
+                    "Carbs: <number>g\n" +
+                    "Fat: <number>g\n" +
+                    "Serving: <description>";
+
+
+    private void askChatGpt_fail() {//210172133
+        if (capturedImage == null) {
+            Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+        String filename = "chatgpt_" + timestamp + ".jpg";
+
+        // Save to Downloads/CalSnap/chatgpt/ (reliable, ChatGPT reads this fine)
+        java.io.File dir = new java.io.File(
+                android.os.Environment.getExternalStoragePublicDirectory(
+                        android.os.Environment.DIRECTORY_DOWNLOADS),
+                "CalSnap/chatgpt");
+        if (!dir.exists()) dir.mkdirs();
+        java.io.File outFile = new java.io.File(dir, filename);
+
+        try {
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(outFile);
+            capturedImage.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Register with MediaScanner → appears in Photos / Recent pickers
+        android.media.MediaScannerConnection.scanFile(this,
+                new String[]{outFile.getAbsolutePath()},
+                new String[]{"image/jpeg"}, null);
+
+        // Copy prompt to clipboard
+        android.content.ClipboardManager clipboard =
+                (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(
+                "ChatGPT prompt", CHATGPT_PROMPT);
+        if (clipboard != null) clipboard.setPrimaryClip(clip);
+
+        // Open ChatGPT
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://chatgpt.com"));
+        startActivity(browserIntent);
+
+        Toast.makeText(this,
+                "📸 Photo saved.\nDownloads → CalSnap → chatgpt → " + filename +
+                        "\n\n📋 Prompt copied.\n\nIf 'Recent' doesn't show it, use that folder path.",
+                Toast.LENGTH_LONG).show();
+    }
+    private void askChatGpt_fail2() {//chatgpt does not recognise uploaded image 2610172133
+        if (capturedImage == null) {
+            Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+        String filename = "chatgpt_" + timestamp + ".jpg";
+
+        // Save via MediaStore → appears in Photos app and Recent pickers
+        android.content.ContentValues values = new android.content.ContentValues();
+        values.put(android.provider.MediaStore.Images.Media.DISPLAY_NAME, filename);
+        values.put(android.provider.MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
+            values.put(android.provider.MediaStore.Images.Media.RELATIVE_PATH,
+                    android.os.Environment.DIRECTORY_PICTURES + "/CalSnap");
+        }
+
+        android.net.Uri imageUri = getContentResolver().insert(
+                android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+        if (imageUri == null) {
+            Toast.makeText(this, "Failed to save image", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            java.io.OutputStream os = getContentResolver().openOutputStream(imageUri);
+            capturedImage.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, os);
+            os.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Copy prompt to clipboard
+        android.content.ClipboardManager clipboard =
+                (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(
+                "ChatGPT prompt", CHATGPT_PROMPT);
+        if (clipboard != null) clipboard.setPrimaryClip(clip);
+
+        // Open ChatGPT
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://chatgpt.com"));
+        startActivity(browserIntent);
+
+        Toast.makeText(this,
+                "📸 Photo saved to gallery. In ChatGPT: upload from 'Recent', then paste the prompt.",
+                Toast.LENGTH_LONG).show();
+    }
+    private void askChatGpt() {//must search for food photo in exploere 2610172057
+        //but is the ONLY working version in the latter ones chatgpt does not recognize
+        //uploaded images so stay with this one for the time being2610172140
+
+        if (capturedImage == null) {
+            Toast.makeText(this, "Take a photo first", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Save the captured bitmap to a known folder for easy upload
+        String timestamp = new java.text.SimpleDateFormat("yyyyMMdd_HHmmss",
+                java.util.Locale.getDefault()).format(new java.util.Date());
+        String filename = "chatgpt_" + timestamp + ".jpg";
+        String folder = android.os.Environment.getExternalStoragePublicDirectory(
+                android.os.Environment.DIRECTORY_DOWNLOADS) + "/CalSnap/chatgpt";
+        java.io.File dir = new java.io.File(folder);
+        if (!dir.exists()) dir.mkdirs();
+        java.io.File outFile = new java.io.File(dir, filename);
+
+        try {
+            java.io.FileOutputStream fos = new java.io.FileOutputStream(outFile);
+            capturedImage.compress(android.graphics.Bitmap.CompressFormat.JPEG, 90, fos);
+            fos.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Save failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Copy the prompt to clipboard
+        android.content.ClipboardManager clipboard =
+                (android.content.ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+        android.content.ClipData clip = android.content.ClipData.newPlainText(
+                "ChatGPT prompt", CHATGPT_PROMPT);
+        if (clipboard != null) clipboard.setPrimaryClip(clip);
+
+        // Open ChatGPT in the browser
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://chatgpt.com"));
+        startActivity(browserIntent);
+
+        Toast.makeText(this,
+                "📸 Photo saved to:\nDownloads/CalSnap/chatgpt/" + filename +
+                        "\n\n📋 Prompt copied.\n\nIn ChatGPT: upload the photo, then long-press the text box → Paste.",
+                Toast.LENGTH_LONG).show();
+    }
 }

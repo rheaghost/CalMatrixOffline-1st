@@ -1,0 +1,368 @@
+package com.calmatrixoffline;
+
+import android.Manifest;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+import android.content.Intent;
+
+import android.view.MotionEvent;
+
+
+
+
+import android.Manifest;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Bundle;
+import android.speech.RecognitionListener;
+import android.speech.RecognizerIntent;
+import android.speech.SpeechRecognizer;
+import android.view.MotionEvent;
+import android.widget.Button;
+import android.widget.TextView;
+import android.widget.Toast;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+
+import java.util.ArrayList;
+import java.util.Locale;
+
+public class VoiceActivity extends AppCompatActivity {
+
+    private static final String TAG = "VoiceActivity";
+    private static final int PERM_REQUEST = 200;
+    private static final int HOLD_THRESHOLD_MS = 500;
+    private static final int MIN_WHISPER_SAMPLES = 16000 * 2;
+
+    private TextView resultText;
+    private Button voiceBtn, backBtn;
+
+    private AudioCaptureHelper micCapture;
+    private boolean whisperReady = false;
+    private boolean recording = false;
+    private boolean recordingStarted = false;
+
+    private SpeechRecognizer googleRecognizer;
+    private Intent googleIntent;
+    private boolean googleReady = false;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_voice);
+
+        resultText = findViewById(R.id.resultText);
+        voiceBtn   = findViewById(R.id.voiceBtn);
+        backBtn    = findViewById(R.id.backBtn);
+
+        micCapture = new AudioCaptureHelper();
+
+        backBtn.setOnClickListener(v -> finish());
+        setupTouchBehavior();
+
+        resultText.setText("Loading models...");
+
+        new Thread(() -> {
+            loadWhisperModel();
+            runOnUiThread(this::setupGoogleRecognizer);
+        }).start();
+    }
+
+    private void loadWhisperModel() {
+        android.util.Log.d(TAG, "loadWhisperModel start");
+        java.io.File model = new java.io.File(getFilesDir(), "ggml-base.bin");
+        if (!model.exists()) {
+            try {
+                android.util.Log.d(TAG, "copying model from assets");
+                java.io.InputStream is = getAssets().open("models/ggml-base.bin");
+                java.io.FileOutputStream fos = new java.io.FileOutputStream(model);
+                byte[] buf = new byte[8192];
+                int n;
+                while ((n = is.read(buf)) > 0) fos.write(buf, 0, n);
+                is.close();
+                fos.close();
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "copy failed", e);
+                runOnUiThread(() -> resultText.setText("Whisper model copy failed: " + e.getMessage()));
+                return;
+            }
+        }
+        android.util.Log.d(TAG, "MODELSIZE on device: " + model.length());//2610191943
+
+        boolean ok = WhisperBridge.loadWhisperModel(model.getAbsolutePath());
+        android.util.Log.d(TAG, "loadWhisperModel result=" + ok);
+        final boolean loaded = ok;
+        runOnUiThread(() -> {
+            whisperReady = loaded;
+            updateButtonState();
+        });
+    }
+
+    private void setupGoogleRecognizer() {
+        if (!SpeechRecognizer.isRecognitionAvailable(this)) {
+            googleReady = false;
+            updateButtonState();
+            return;
+        }
+        googleRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
+        googleIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        googleIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+        googleIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault().toString());
+        googleIntent.putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true);
+
+        googleRecognizer.setRecognitionListener(new RecognitionListener() {
+            @Override public void onReadyForSpeech(Bundle p) { resultText.setText("🎤 Listening (Google)..."); }
+            @Override public void onBeginningOfSpeech() {}
+            @Override public void onRmsChanged(float r) {}
+            @Override public void onBufferReceived(byte[] b) {}
+            @Override public void onEndOfSpeech() {}
+
+            @Override
+            public void onError(int error) {
+                android.util.Log.e(TAG, "Google onError=" + error);
+                resultText.setText("Google error: " + error + " — try Whisper (hold) instead");
+            }
+
+            @Override
+            public void onResults(Bundle results) {
+                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (matches != null && !matches.isEmpty()) {
+                    String text = matches.get(0);
+                    resultText.setText("🗣 (Google) " + text + "\n\nSearching...");
+                    searchAndReturn(text);
+                } else {
+                    resultText.setText("No speech detected");
+                }
+            }
+
+            @Override
+            public void onPartialResults(Bundle partial) {
+                ArrayList<String> m = partial.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+                if (m != null && !m.isEmpty()) resultText.setText("🎤 " + m.get(0));
+            }
+
+            @Override public void onEvent(int t, Bundle p) {}
+        });
+
+        googleReady = true;
+        updateButtonState();
+    }
+
+    private void updateButtonState() {
+        voiceBtn.setEnabled(whisperReady || googleReady);
+        voiceBtn.setText("Hold to talk");
+        if (whisperReady && googleReady) {
+            resultText.setText("Tap = Google · Hold = Whisper (offline)");
+        } else if (whisperReady) {
+            resultText.setText("Hold = Whisper (offline) · Google not ready");
+        } else if (googleReady) {
+            resultText.setText("Tap = Google · Whisper not ready");
+        }
+    }
+
+    private Runnable holdStarter;
+
+    private void setupTouchBehavior() {
+        voiceBtn.setOnTouchListener((v, ev) -> {
+            switch (ev.getActionMasked()) {
+
+                case MotionEvent.ACTION_DOWN:
+                    if (recording) return true;
+
+                    if (ContextCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        ActivityCompat.requestPermissions(this,
+                                new String[]{Manifest.permission.RECORD_AUDIO}, PERM_REQUEST);
+                        return true;
+                    }
+
+                    holdStarter = () -> {
+                        if (!recording) {
+                            android.util.Log.d(TAG, "ACTION_DOWN → starting Whisper record");
+                            if (micCapture.start()) {
+                                recording = true;
+                                recordingStarted = true;
+                                voiceBtn.setText("Release");
+                                resultText.setText("🎤 Recording (release to transcribe)");
+                            } else {
+                                android.util.Log.e(TAG, "micCapture.start() failed");
+                                resultText.setText("Microphone start failed");
+                            }
+                        }
+                    };
+                    v.postDelayed(holdStarter, HOLD_THRESHOLD_MS);
+                    return true;
+
+                case MotionEvent.ACTION_UP:
+                case MotionEvent.ACTION_CANCEL:
+                    if (holdStarter != null) {
+                        v.removeCallbacks(holdStarter);
+                        holdStarter = null;
+                    }
+                    voiceBtn.setText("Hold to talk");
+
+                    if (recordingStarted) {
+                        recordingStarted = false;
+                        recording = false;
+                        android.util.Log.d(TAG, "ACTION_UP → stopping, running Whisper");
+                        stopAndTranscribeWhisper();
+                    } else {
+                        android.util.Log.d(TAG, "ACTION_UP short tap → Google");
+                        startGoogleVoice();
+                    }
+                    return true;
+            }
+            return false;
+        });
+    }
+
+    private void startGoogleVoice() {
+        if (!googleReady || googleRecognizer == null) {
+            Toast.makeText(this, "Google voice not ready", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        if (recording) {
+            // Defensive: never start Google while AudioRecord is active
+            Toast.makeText(this, "Mic busy — wait a moment", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        android.util.Log.d(TAG, "Google startListening");
+        resultText.setText("🎤 Listening (Google)...");
+        googleRecognizer.startListening(googleIntent);
+    }
+
+    private void stopAndTranscribeWhisper() {
+        resultText.setText("Transcribing (Whisper)...");
+        android.util.Log.d(TAG, "stopAndTranscribeWhisper start");
+
+        new Thread(() -> {
+            short[] pcm;
+            try {
+                pcm = micCapture.stop();
+                //2610181800
+                int maxAmp = 0;
+                for (short s : pcm) { int a = Math.abs(s); if (a > maxAmp) maxAmp = a; }
+                android.util.Log.d(TAG, "maxAmplitude=" + maxAmp + " samples=" + pcm.length);
+
+
+                StringBuilder sb = new StringBuilder("first 20 samples: ");
+                for (int i = 0; i < 20 && i < pcm.length; i++) sb.append(pcm[i]).append(" ");
+                android.util.Log.d(TAG, sb.toString());
+
+
+                //
+
+            } catch (Exception e) {
+                android.util.Log.e(TAG, "micCapture.stop() threw", e);
+                runOnUiThread(() -> resultText.setText("Audio capture failed: " + e.getMessage()));
+                return;
+            }
+            android.util.Log.d(TAG, "pcm samples=" + pcm.length);
+
+            if (pcm.length < MIN_WHISPER_SAMPLES) {
+                runOnUiThread(() -> resultText.setText("Too short — hold at least 2 seconds"));
+                return;
+            }
+
+            long t0 = System.currentTimeMillis();
+            android.util.Log.d(TAG, "calling transcribePcm");
+            String text = WhisperBridge.transcribePcm(pcm, 4, "en");
+            long ms = System.currentTimeMillis() - t0;
+            android.util.Log.d(TAG, "transcribePcm returned in " + ms + "ms: " + text);
+
+            if (text == null) text = "";
+            String trimmed = text.trim();
+            if (trimmed.isEmpty() || trimmed.contains("[BLANK_AUDIO]") || trimmed.contains("[Music]")
+                    || trimmed.contains("구독과 좋아요") || trimmed.contains("Thank you for watching")) {
+                runOnUiThread(() -> resultText.setText("Couldn't hear anything clearly — try again"));
+                return;
+            }
+
+            final String result = text;
+            final long elapsed = ms;
+            runOnUiThread(() -> {
+                resultText.setText("🗣 (Whisper, " + elapsed + "ms)\n" + result + "\n\nSearching...");
+                searchAndReturn(result);
+            });
+        }).start();
+    }
+
+    private void searchAndReturn(String spokenText) {
+        android.util.Log.d(TAG, "searchAndReturn: " + spokenText);
+        //2610181827
+        // Strip punctuation and extra whitespace
+        String cleaned = spokenText.toLowerCase()
+                .replaceAll("[^a-z0-9가-힣 ]", " ")
+                .replaceAll("\\s+", " ")
+                .trim();
+        android.util.Log.d(TAG, "cleaned search: [" + cleaned + "]");
+        //2610181827
+
+
+        //String[] words = spokenText.toLowerCase().split(" ");//wrong 2610191817
+        String[] words = cleaned.split(" ");   // ← was spokenText
+
+        for (String word : words) {
+            FoodDatabase.FoodItem food = FoodDatabase.search(word);
+            if (food != null) {
+                android.util.Log.d(TAG, "found food: " + food.name);
+                resultText.setText("✅ Found: " + food.name + "\n" +
+                        "Calories: " + food.calories + " cal\n" +
+                        "Protein: " + food.protein + "g | Carbs: " + food.carbs + "g | Fat: " + food.fat + "g\n" +
+                        "Serving: " + food.serving);
+
+                // Return to MainActivity after a short delay so user sees the result
+                voiceBtn.postDelayed(() -> {
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("FOOD_NAME", food.name);
+                    setResult(RESULT_OK, resultIntent);
+                    finish();
+                }, 1200);
+                return;
+            }
+        }
+        resultText.setText("❌ No food found for:\n" + spokenText);
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        if (requestCode == PERM_REQUEST) {
+            if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                resultText.setText("Mic granted — try again");
+            } else {
+                resultText.setText("Microphone permission denied");
+            }
+        }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (recording) {
+            try { micCapture.stop(); } catch (Exception ignored) {}
+            recording = false;
+        }
+        if (googleRecognizer != null) {
+            try { googleRecognizer.destroy(); } catch (Exception ignored) {}
+            googleRecognizer = null;
+        }
+    }
+}
