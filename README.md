@@ -89,3 +89,18 @@ No subscription — pay once, use forever
 
 Lifetime updates included
 ---
+License:
+Commercial use requires writte and signed contract otherwise forbidden.
+Commercial license will consist of right to use all or part of source in 
+company's product.Polished
+Please help me by purchasing this app at https://transtech.gumroad.com/l/dbmlsu to
+support living,medication costs, and more important,continuous improvement of this app.
+To add more AI food recognition, I need suitable computer hardware and I lost
+multiple computers in a row in June-July 2026 which deprived me to buy an RTX 3090
+which was more affordable then.
+Further improvements would be in outsourced UI design which requires funds,
+localization in both UI and AI food recognition options(maybe through location),
+food/exercise diary,and subscription based health advice service,by lower cost AI
+or higher cost human advice.
+(c) 2026 rheaghost
+Rev 1.0 KST 2611020252
